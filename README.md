@@ -1,1 +1,1 @@
-Everything (for now) is in the Wiki.
+Everything is in the Wiki.
