@@ -12,7 +12,7 @@ Below is a list of online learning resources that have been completed along my j
 
 ---
 
-### [freeCodeCamp](http://freecodecamp.org/) | #### [Profile](https://www.freecodecamp.org/samlegros)  
+### [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros))  
 #### Completed Courses:  
 * [Front End Development Certification](https://www.freecodecamp.org/certification/samlegros/legacy-front-end) (August 2017)
 
