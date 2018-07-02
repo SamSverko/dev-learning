@@ -2,8 +2,7 @@ Below is a list of online learning resources that have been completed along my j
 
 ---
 
-### [Codecademy](https://www.codecademy.com/)  
-#### [Profile](https://www.codecademy.com/SamLegros)  
+### [Codecademy](https://www.codecademy.com/) | #### [Profile](https://www.codecademy.com/SamLegros)  
 #### Completed Courses:  
 * [Welcome to Codecademy!](https://www.codecademy.com/learn/welcome-to-codecademy) (June 2018)
 * [PHP](https://www.codecademy.com/en/tracks/php) (July 2017)
@@ -13,8 +12,7 @@ Below is a list of online learning resources that have been completed along my j
 
 ---
 
-### [freeCodeCamp](http://freecodecamp.org/)  
-#### [Profile](https://www.freecodecamp.org/samlegros)  
+### [freeCodeCamp](http://freecodecamp.org/) | #### [Profile](https://www.freecodecamp.org/samlegros)  
 #### Completed Courses:  
 * [Front End Development Certification](https://www.freecodecamp.org/certification/samlegros/legacy-front-end) (August 2017)
 
