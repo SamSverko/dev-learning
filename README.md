@@ -13,19 +13,19 @@ Below is a list of online learning resources that have been completed along my j
 ---
 
 ### [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros))  
-#### Completed Courses:  
+#### Completed Certifications:  
 * [Front End Development Certification](https://www.freecodecamp.org/certification/samlegros/legacy-front-end) (August 2017)
 
 ---
 
-### [Laracasts](https://laracasts.com/)  
+### [Laracasts](https://laracasts.com/) ([Profile](https://laracasts.com/@SamLegros))
 #### Completed Courses:
 * [The PHP Practitioner](https://laracasts.com/series/php-for-beginners) (August 2018)
 
 ---
 
 ### [w3schools](https://www.w3schools.com/)  
-#### Completed Courses:
+#### Completed Tutorials:
 * [PHP MySQL Database](https://www.w3schools.com/php/php_mysql_intro.asp) (August 2017)
 * [PHP 5 Advanced](https://www.w3schools.com/php/php_arrays_multi.asp) (August 2017)
 * [PHP 5 Forms](https://www.w3schools.com/php/php_forms.asp) (August 2017)
