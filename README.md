@@ -18,6 +18,12 @@ Below is a list of online learning resources that have been completed along my j
 
 ---
 
+### [Laracasts](https://laracasts.com/)  
+#### Completed Courses:
+* [The PHP Practitioner](https://laracasts.com/series/php-for-beginners) (August 2018)
+
+---
+
 ### [w3schools](https://www.w3schools.com/)  
 #### Completed Courses:
 * [PHP MySQL Database](https://www.w3schools.com/php/php_mysql_intro.asp) (August 2017)
