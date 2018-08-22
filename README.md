@@ -20,6 +20,7 @@ Below is a list of online learning resources that have been completed along my j
 
 ### [Laracasts](https://laracasts.com/) ([Profile](https://laracasts.com/@SamLegros))
 #### Completed Courses:
+* [Object-Oriented Bootcamp [PHP]](https://laracasts.com/series/object-oriented-bootcamp-in-php) (August 2018)
 * [The PHP Practitioner](https://laracasts.com/series/php-for-beginners) (August 2018)
 
 ---
