@@ -20,6 +20,7 @@ Below is a list of online learning resources that have been completed along my j
 
 ### [Laracasts](https://laracasts.com/) ([Profile](https://laracasts.com/@SamLegros))
 #### Completed Courses:
+* [Sublime Text Mastery](https://laracasts.com/series/sublime-text-mastery) (August 2018)
 * [PHP 7 Up and Running](https://laracasts.com/series/php7-up-and-running) (August 2018)
 * [Object-Oriented Bootcamp [PHP]](https://laracasts.com/series/object-oriented-bootcamp-in-php) (August 2018)
 * [The PHP Practitioner](https://laracasts.com/series/php-for-beginners) (August 2018)
