@@ -12,9 +12,11 @@ Below is a list of online learning resources that have been completed along my j
 
 ---
 
-### [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros))  
-#### Completed Certifications:
+### [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros)) 
+#### Completed Curriculum:
 * [Basic HTML and HTML5](https://learn.freecodecamp.org/responsive-web-design/basic-html-and-html5) (September 2018)
+
+#### Completed Certifications:
 * [Front End Development Certification](https://www.freecodecamp.org/certification/samlegros/legacy-front-end) (August 2017)
 
 ---
