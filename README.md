@@ -14,6 +14,7 @@ Below is a list of online learning resources that I have completed along my jour
 
 ### [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros)) 
 #### Completed Curriculum:
+* [CSS Flexbox](https://learn.freecodecamp.org/responsive-web-design/css-flexbox) (September 2018)
 * [Responsive Web Design Principles](https://learn.freecodecamp.org/responsive-web-design/responsive-web-design-principles) (September 2018)
 * [Applied Accessibility](https://learn.freecodecamp.org/responsive-web-design/applied-accessibility) (September 2018)
 * [Applied Visual Design](https://learn.freecodecamp.org/responsive-web-design/applied-visual-design) (September 2018)
