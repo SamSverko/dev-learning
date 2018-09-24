@@ -1,4 +1,4 @@
-Below is a list of online learning resources that have been completed along my journey of becoming a developer:
+Below is a list of online learning resources that I have completed along my journey of becoming a web developer:
 
 ---
 
@@ -14,6 +14,7 @@ Below is a list of online learning resources that have been completed along my j
 
 ### [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros)) 
 #### Completed Curriculum:
+* [Responsive Web Design Principles](https://learn.freecodecamp.org/responsive-web-design/responsive-web-design-principles) (September 2018)
 * [Applied Accessibility](https://learn.freecodecamp.org/responsive-web-design/applied-accessibility) (September 2018)
 * [Applied Visual Design](https://learn.freecodecamp.org/responsive-web-design/applied-visual-design) (September 2018)
 * [Basic CSS](https://learn.freecodecamp.org/responsive-web-design/basic-css) (September 2018)
