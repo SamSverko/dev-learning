@@ -14,6 +14,7 @@ Below is a list of online learning resources that I have completed along my jour
 
 ### [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros)) 
 #### Completed Curriculum:
+* [Debugging](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/debugging) (November 2018)
 * [Regular Expressions](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/regular-expressions) (November 2018)
 * [ES6](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/es6) (November 2018)
 * [Basic JavaScript](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/basic-javascript) (November 2018)
