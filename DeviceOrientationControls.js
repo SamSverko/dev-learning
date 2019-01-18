@@ -62,7 +62,7 @@ THREE.DeviceOrientationControls = function ( object ) {
 		onScreenOrientationChangeEvent(); // run once on load
 
 		window.addEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
-		// window.addEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
+		window.addEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
 
 		scope.enabled = true;
 
