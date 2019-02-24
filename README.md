@@ -43,6 +43,10 @@ Below is a list of online learning resources that I have completed along my jour
 
 ---
 
+### [Udemy](https://www.udemy.com)  
+#### Completed Courses:
+* [Three.js & WebGL 3D Programming Crash Course (VR, OpenGL)](https://www.udemy.com/threejs-programming/) (January 2019)
+
 ### [w3schools](https://www.w3schools.com/)  
 #### Completed Tutorials:
 * [PHP MySQL Database](https://www.w3schools.com/php/php_mysql_intro.asp) (August 2017)
