@@ -43,6 +43,12 @@ Below is a list of online learning resources that I have completed along my jour
 
 ---
 
+### [Lynda](https://www.lynda.com/)
+#### Course In Progress:
+* [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer)
+
+---
+
 ### [Udemy](https://www.udemy.com)  
 #### Completed Courses:
 * [Three.js & WebGL 3D Programming Crash Course (VR, OpenGL)](https://www.udemy.com/threejs-programming/) (January 2019)
