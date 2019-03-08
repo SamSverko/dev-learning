@@ -1,4 +1,6 @@
-Below is a list of online learning resources that I have completed along my journey of becoming a web developer:
+# SamLegros/dev-learning
+
+A list of online learning resources that I have completed along my journey of becoming a web developer.
 
 ---
 
