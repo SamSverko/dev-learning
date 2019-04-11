@@ -48,6 +48,7 @@ Completed Courses:
 ## [Lynda](https://www.lynda.com/)
 Course In Progress:
 * [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer)
+  * Completed Chapters: React.js Essential Training, Node.js Essential Training, Learning npm the Node Package Manager, Building a Website with Node.js and Express.js, Learning MongoDB, and Express Essential Training
 
 ---
 
