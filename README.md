@@ -5,7 +5,9 @@ A list of online learning resources that I have completed along my journey of be
 ---
 
 ## [Codecademy](https://www.codecademy.com/) ([Profile](https://www.codecademy.com/SamLegros))  
-Completed Courses:  
+
+Completed Courses:
+
 * [Welcome to Codecademy!](https://www.codecademy.com/learn/welcome-to-codecademy) (June 2018)
 * [PHP](https://www.codecademy.com/en/tracks/php) (July 2017)
 * [SQL: Analyzing Business Metrics](https://www.codecademy.com/learn/sql-analyzing-business-metrics) (June 2017)
@@ -14,8 +16,10 @@ Completed Courses:
 
 ---
 
-## [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros)) 
+## [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros))
+
 Completed Curriculum:
+
 * [Debugging](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/debugging) (November 2018)
 * [Regular Expressions](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/regular-expressions) (November 2018)
 * [ES6](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/es6) (November 2018)
@@ -30,6 +34,7 @@ Completed Curriculum:
 * [Basic HTML and HTML5](https://learn.freecodecamp.org/responsive-web-design/basic-html-and-html5) (September 2018)
 
 Completed Certifications:
+
 * [Responsive Web Design Certification](https://www.freecodecamp.org/certification/samlegros/responsive-web-design) (September 2018)
 * [Front End Development Certification](https://www.freecodecamp.org/certification/samlegros/legacy-front-end) (August 2017)
 
@@ -37,6 +42,7 @@ Completed Certifications:
 
 ## [Laracasts](https://laracasts.com/) ([Profile](https://laracasts.com/@SamLegros))
 Completed Courses:
+
 * [What's New in PHP 7.1](https://laracasts.com/series/whats-new-in-php-7-1) (August 2018)
 * [Sublime Text Mastery](https://laracasts.com/series/sublime-text-mastery) (August 2018)
 * [PHP 7 Up and Running](https://laracasts.com/series/php7-up-and-running) (August 2018)
@@ -46,20 +52,27 @@ Completed Courses:
 ---
 
 ## [Lynda](https://www.lynda.com/)
-Course In Progress:
+
+In Progress:
+
 * [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer)
   * **Completed Chapters:** React.js Essential Training, Node.js Essential Training, Learning npm the Node Package Manager, Building a Website with Node.js and Express.js, Learning MongoDB, Express Essential Training, and Building RESTful Web APIs with Node.js and Express.
+* [Learning Docker](https://www.lynda.com/Docker-tutorials/Learning-Docker/721901-2.html)
 
 ---
 
 ## [Udemy](https://www.udemy.com)  
+
 Completed Courses:
+
 * [Three.js & WebGL 3D Programming Crash Course (VR, OpenGL)](https://www.udemy.com/threejs-programming/) (January 2019)
 
 ---
 
-## [w3schools](https://www.w3schools.com/)  
+## [w3schools](https://www.w3schools.com/)
+
 Completed Tutorials:
+
 * [PHP MySQL Database](https://www.w3schools.com/php/php_mysql_intro.asp) (August 2017)
 * [PHP 5 Advanced](https://www.w3schools.com/php/php_arrays_multi.asp) (August 2017)
 * [PHP 5 Forms](https://www.w3schools.com/php/php_forms.asp) (August 2017)
