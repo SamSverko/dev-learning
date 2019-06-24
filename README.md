@@ -57,7 +57,10 @@ In Progress:
 
 * [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer)
   * **Completed Chapters:** React.js Essential Training, Node.js Essential Training, Learning npm the Node Package Manager, Building a Website with Node.js and Express.js, Learning MongoDB, Express Essential Training, and Building RESTful Web APIs with Node.js and Express.
-* [Learning Docker](https://www.lynda.com/Docker-tutorials/Learning-Docker/721901-2.html)
+
+Completed Courses:
+
+* [Learning Docker](https://www.lynda.com/Docker-tutorials/Learning-Docker/721901-2.html) (June 2019)
 
 ---
 
