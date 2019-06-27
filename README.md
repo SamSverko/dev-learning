@@ -60,6 +60,7 @@ In Progress:
 
 Completed Courses:
 
+* [Programming Foundations: Databases](https://www.lynda.com/SQL-tutorials/Programming-Foundations-Databases/784293-2.html) (June 2019)
 * [Learning Docker](https://www.lynda.com/Docker-tutorials/Learning-Docker/721901-2.html) (June 2019)
 
 ---
