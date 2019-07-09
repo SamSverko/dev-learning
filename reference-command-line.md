@@ -180,25 +180,9 @@ A handy list of command line terminal, well, commands, that I will probably need
 * `docker -d -p [incoming-port]:[outoging-port] --restart=always` The `--restart=always` flag tells the container to restart if it ever fails.
 * `docker save -o [file-name] [image-name]:[tag]`
 * `docker load -i [file-name]`
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
+
+---
+
+## [NPM](https://www.npmjs.com/)
+
+* `npm list -g --depth 0` List all globally installed packages.
