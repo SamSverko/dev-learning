@@ -1,8 +1,8 @@
-# Angular 8
+# [angular-8](https://angular.io/)
 
-Taken from official [Angular tutorial website](https://angular.io/start).
+---
 
-## Your first app
+## [Your first app](https://angular.io/start)
 
 ### Template syntax
 
@@ -27,12 +27,16 @@ Taken from official [Angular tutorial website](https://angular.io/start).
 
 * Inside a component's class, `@Output() notify = new EventEmitter();` indicates that the component will emit an event when the value of the notify property changes.
 
+---
+
 ## Routing
 
 ### Registering a route
 
 * `{ path: 'products/:productId', component: ProductDetailsComponent }` Added to the `RouterModule` in the main `app.module.ts` file directs a route.
 * `<a [title]="product.name + ' details'" [routerLink]="['/products', productId]"> {{ product.name }} </a>` This `RouterLink` directive gives the router control over the anchor element.
+
+---
 
 ## Deployment
 
@@ -41,6 +45,7 @@ Taken from official [Angular tutorial website](https://angular.io/start).
 * `npm install -g @angular/cli` Install the Angular CLI globally.
 * `ng new [my-project-name]` Creates a new Angular CLI workspace.
 
+---
 
 ## General
 
