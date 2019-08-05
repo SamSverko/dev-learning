@@ -40,7 +40,7 @@
 
 * Inside PSQL: `\q` Exit the PSQL.
 
-* Inside PSQL: `\! clear` Clears the terminal.
+* Inside PSQL: `\! clear` Clears the terminal, or the keyboard shortcut `ctl+l`.
 
 * `psql -h [aws-endpoint] -U [user-name] -d [database-name]` SSL connection to remote AWS RDS database. The `-h` refers to host, `-U` refers to user, and `-d` refers to database. You will then connect to the remote PSQL.
 
