@@ -50,5 +50,11 @@
 ## General
 
 * `ng serve --open` Launch server, watch files, and rebuilds app as you make changes. The `--open` flag opens the browser to the server `http://localhost:4200/`.
-* `ng generate component heroes` Generates a new component in the `src/app/heroes` directory, and generates the files needed for the `HeroesComponent` component.
+* `ng generate component [heroes]` Generates a new component in the `src/app/heroes` directory, and generates the files needed for the `HeroesComponent` component.
 * `[(ngModel)]` is Angular's two-way data binding syntax.
+* `{{ hero.name | uppercase }}` The pipe operator modifies the data, in this case, to all capital letter.
+* `ng generate service [hero]` Generates a service.
+* `ng generate module app-routing --flat --module=app` Generate the default Angular routing module. The `--flat` puts the file in the `src/app` folder instead of its own. The `--module=app` tell the CLI to register it in the `imports` array of the `AppModule`.
+* A typical Angular route has two properties:
+	* **path** a string that matches the URL in the browser address bar.
+	* **component** the component that the router should create when navigating to this route.
