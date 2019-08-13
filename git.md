@@ -2,4 +2,6 @@
 
 ---
 
+## General
 
+* `git add .` Add all changed files.
