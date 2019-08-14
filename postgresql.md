@@ -1,4 +1,4 @@
-# [postgresql](https://www.postgresql.org)
+e# [postgresql](https://www.postgresql.org)
 
 ---
 
@@ -42,7 +42,7 @@
 
 * Inside PSQL: `\! clear` Clears the terminal, or the keyboard shortcut `ctl+l`.
 
-* `psql -h [aws-endpoint] -U [user-name] -d [database-name]` SSL connection to remote AWS RDS database. The `-h` refers to host, `-U` refers to user, and `-d` refers to database. You will then connect to the remote PSQL.
+* `psql -h [host/aws-endpoint] -U [user-name] -d [database-name]` SSL connection to remote AWS RDS database. The `-h` refers to host, `-U` refers to user, and `-d` refers to database. You will then connect to the remote PSQL.
 
 ---
 
@@ -345,3 +345,7 @@
 ### Errors
 
 * You can view the entire [list of PostgreSQL error codes](https://www.postgresql.org/docs/10/errcodes-appendix.html).
+
+### Data dump
+
+* `pg_dump -h [host/aws-endpoint] -U [user-name] -f [file-name].sql [database-name]` This will export your PostgreSQL database as an `SQL` file.
