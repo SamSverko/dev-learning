@@ -19,3 +19,4 @@
 * `mount [directory-to-mount] [directory-to-be-mounted-on]` Mount a directory onto another.
 * `umount [directory]` Unmount directory.
 * `rm [file-name]` Delete file.
+* `pwd|pbcopy` Copy current directory to clipboard.
