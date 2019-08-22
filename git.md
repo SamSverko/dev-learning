@@ -9,5 +9,5 @@
 ## Saving changes
 
 * `git add .` Add all changed files.
-* `git commit` Record changes to the repository.
+* `git commit -m "My head line" -m "My content line."`  Record changes to the repository with head line and content message.
 * `git push` Update remote refs along with associated objects.
