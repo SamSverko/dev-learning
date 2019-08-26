@@ -10,6 +10,7 @@
 * `ls -l` List directory contents, use a long listing format.
 * `ls -R` List all directory and sub-directory contents.
 * `ls -a` List directory contents, including hidden files.
+* `file *` List file types.
 * `ssh` OpenSSH SSH client (remote login program).
 * `-i identity_file` Selects a file from which the identity (private key) for public key authentication is read.
 * `username@public-ip-address` SSH connects and logs into the specified hostname (with optional user name).
