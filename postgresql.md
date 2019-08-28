@@ -114,6 +114,8 @@ e# [postgresql](https://www.postgresql.org)
 
 * In PSQL: `SELECT DISTINCT city FROM weather` Duplicate rows will be removed from query result.
 
+* In PSQL: `SELECT DISTINCT [column-name] FROM [table-name]` The `DISTINCT` clause is used in the `SELECT` statement to remove duplicate rows from a result set. The `DISTINCT` clause keeps one row for each group of duplicates. The `DISTINCT` clause can be used on one or more columns of a table.
+
 ### Joins between tables
 
 * A query that accesses multiple rows of the same or different tables at one time is called a _join_ query.
