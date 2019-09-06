@@ -21,3 +21,4 @@
 * `umount [directory]` Unmount directory.
 * `rm [file-name]` Delete file.
 * `pwd|pbcopy` Copy current directory to clipboard.
+* `rm rf [directory]` Remove directory with contents.
