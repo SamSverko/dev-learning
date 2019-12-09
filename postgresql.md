@@ -351,3 +351,4 @@ e# [postgresql](https://www.postgresql.org)
 ### Data dump
 
 * `pg_dump -h [host/aws-endpoint] -U [user-name] -f [file-name].sql [database-name]` This will export your PostgreSQL database as an `SQL` file.
+	* Example: `pg_dump -h rds-postgresql-1.c0l5eyyoflbd.us-east-2.rds.amazonaws.com -U role_admin -f heat-map.sql myDatabase`. You will then be prompted for the database password.
