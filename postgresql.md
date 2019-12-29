@@ -1,4 +1,4 @@
-e# [postgresql](https://www.postgresql.org)
+# [postgresql](https://www.postgresql.org)
 
 ---
 
