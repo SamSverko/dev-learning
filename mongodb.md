@@ -288,3 +288,41 @@ db.movieDetails.replaceOne(filter, doc);
 ---
 
 ### Chapter 3: Deeper dive on the MongoDB query language
+
+#### Introduction to query operators
+
+- CRUD operations require a filter.
+
+#### Comparison operators
+
+- Greater than: `$gt`, such as `db.movieDetails.find({runtime: {$gt: 90}});`.
+- Less than: `$lt`, such as selecting from a range: `db.movieDetails.find({runtime: {$gt: 90, $lt: 120}}).pretty();`.
+- Greater than or equal to: `$gte`.
+- Less than or equal to: `$lte`.
+- Find all movies with a runtime that is greater than or equal 120 minutes, and that have a "tomato.meter" score of greater than or equal to 95: `db.movieDetails.find({runtime: {$gte: 180}, "tomato.meter": {$gte: 95}}, {_id: 0, title: 1, runtime: 1});`.
+- Not equal to: `$ne`. Useful in data-cleaning. Such as find all movies that don't have 'UNRATED' as their rated value: `db.movieDetails.find({rated: {$ne: "UNRATED"}}, {_id: 0, title: 1, runtime: 1});`.
+- Matches the values specified, `$in`. Such as find all moves that have a rated value of either 'G' or 'PG': `db.movieDetails.find({rated: {$in: ["G", "PG"]}}, {_id: 0, title: 1, runtime: 1});`. The value of `$in` must be an array.
+- Matches non of the values specified, `$nin`.
+
+#### Element operators
+
+- Match documents if it contains a specified key exists: `{mpaaRating: {$exists: true}}`. Change `true` to `false` to return values that do not have this field.
+- Match documents where a key has a specified value: `db.movies.find({viewerRating: {$type: "int"}}).pretty();`.
+
+#### Logical operators
+
+- `$or` and `$and`.
+```javascript
+db.movieDetails.find({$or: [{"tomato.meter": {$gt: 95}},
+							{"metacritic": {$gt: 88}}]},
+							{_id: 0, title: 1, "tomato.meter": 1, "metacritic": 1});
+```
+- Comparison operators, when multiple are used, are automatically `anded` together.
+
+#### Array operators: $all
+
+- Match arrays that contain all elements specified: `$all`. Such as movies that have "Comedy, Crime, and Drama" in their arrays: `db.movieDetails.find({genres: {$all: ["Comedy", "Crime", "Drama"]}}, {_id: 0, title: 1, genres: 1}).pretty();`.
+
+#### Array operators: $size
+
+- Select documents if the array field is a specified size (or array length), `$size`. Such as: `db.movieDetails.find({countries: {$size: 1}}).pretty();`.
