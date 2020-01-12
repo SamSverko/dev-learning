@@ -326,3 +326,13 @@ db.movieDetails.find({$or: [{"tomato.meter": {$gt: 95}},
 #### Array operators: $size
 
 - Select documents if the array field is a specified size (or array length), `$size`. Such as: `db.movieDetails.find({countries: {$size: 1}}).pretty();`.
+
+#### Array operators: $elemMatch
+
+- Specify the field you want to field, specify selectors within that key that matches all the elements in `$elemMatch`: `db.movieDetails.find({boxOffice: {$elemMatch: {"country": "Germany", "revenue": {$gt: 17}}}});`.
+
+#### $regex operator
+
+- Regex = regular expression.
+- Using regular expressions to filter results: `db.movieDetails.find({"awards.text": {$regex: /^Won .*/}}, {_id: 0, title: 1, "awards.text": 1}).pretty();`.
+- Find documents that contain at least one score in the results array that is greater than or equal to 70 and less than 80: `db.scores.count({results: {$elemMatch: {$gte: 70, $lt: 80}}});`.

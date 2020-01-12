@@ -1,4 +1,4 @@
-# SamLegros/dev-learning
+# dev-learning
 
 A list of online learning resources that I have completed along my journey of becoming a web developer.
 
@@ -62,6 +62,14 @@ Completed Courses:
 
 * [Programming Foundations: Databases](https://www.lynda.com/SQL-tutorials/Programming-Foundations-Databases/784293-2.html) (June 2019)
 * [Learning Docker](https://www.lynda.com/Docker-tutorials/Learning-Docker/721901-2.html) (June 2019)
+
+---
+
+## [MongoDB University](https://university.mongodb.com/)
+
+Completed Courses:
+
+* [M001: MongoDB Basics](https://university.mongodb.com/mercury/M001/2019_December_17/overview) (January 2020)
 
 ---
 
