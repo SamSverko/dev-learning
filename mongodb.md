@@ -40,7 +40,7 @@
 
 ---
 
-## M001 MongoDB Basics
+## M001: MongoDB Basics
 
 ### Chapter 1: Introduction
 
@@ -336,3 +336,62 @@ db.movieDetails.find({$or: [{"tomato.meter": {$gt: 95}},
 - Regex = regular expression.
 - Using regular expressions to filter results: `db.movieDetails.find({"awards.text": {$regex: /^Won .*/}}, {_id: 0, title: 1, "awards.text": 1}).pretty();`.
 - Find documents that contain at least one score in the results array that is greater than or equal to 70 and less than 80: `db.scores.count({results: {$elemMatch: {$gte: 70, $lt: 80}}});`.
+
+---
+
+## M103: Basic cluster administration
+
+### Chapter 1: Introduction and setup
+
+#### Introduction to replication and sharding
+
+- Administrative tools.
+- Mongod - Request and data access.
+- Authentication and database logs.
+- High availability and fault tolerance.
+- Scalability and horizontal sharding.
+
+#### Setting up the vagrant environment
+
+- Virtual environment creates a sandbox for the course.
+- Avoids dependency and system troubleshooting.
+- VirtualBox and Vagrant.
+- Start Vagrant: `vagrant up`.
+- Stop Virtual Machine (VM): `vagrant halt` for gracefully shut down, or `vagrant suspend` to suspend it.
+- SSH to the VM: `vagrant ssh`.
+- Exit the VM: `exit`.
+- Check the health/status of the VM: `vagrant status`.
+
+#### The mongod
+
+- Mongod is the main daemon process of MongoDB.
+- What is daemon: it's a process or programs that's meant to be run and not interacted with directly.
+- Start the mongod: `mongod`.
+- Connect to the MongoDB shell once mongod is running: `mongo`.
+- Shutdown the MongoDB process: `db.shutdownServer();`.
+- Mongod flags:
+	- `--port` (default is 27017).
+	- `--dbpath` specify where the db directory is located, if changed from default.
+	- `--logpath` specify where the db will log informational messages.
+	- `--fork` start mongod as a background process.
+- Start mongoDB shell at specified port: `mongo --port 3000`.
+- Create user with root access on admin database:
+```shell
+mongo admin --host localhost:27000 --eval '
+  db.createUser({
+    user: "m103-admin",
+    pwd: "m103-pass",
+    roles: [
+      {role: "root", db: "admin"}
+    ]
+  })
+'
+```
+
+#### Configuration file
+
+- Include `bind_ip` to add specified network access.
+- YAML - "YAML Ain't Markup Language".
+- To use a config file when executing the MongoDB daemon, run: `mongod --config [or use flag -f] "/location/of/config.yaml"`.
+- List current mongod processes: `ps -ef | grep mongod`.
+- Kill a process: `kill <pid>`.
