@@ -392,6 +392,52 @@ mongo admin --host localhost:27000 --eval '
 
 - Include `bind_ip` to add specified network access.
 - YAML - "YAML Ain't Markup Language".
-- To use a config file when executing the MongoDB daemon, run: `mongod --config [or use flag -f] "/location/of/config.yaml"`.
+- To use a config file when executing the MongoDB daemon, run: `mongod --config [or use flag -f] "/location/of/config.conf"`.
 - List current mongod processes: `ps -ef | grep mongod`.
 - Kill a process: `kill <pid>`.
+
+#### File structure
+
+- Do not interact with any `WiredTiger` files.
+- The files in `journal` directory helps save checkpoints of your data.
+- MongoDB uses socket connections.
+- `diagnostics.data` and log files assist support in diagnostics.
+- Do not modify files or folders in the MongoDB data directory.
+- Change ownership of folder: `sudo chown -R vagrant:vagrant /var/mongodb`.
+
+#### Basic commands
+
+- Basic helper groups:
+	- `db.[method]()` Controls the database.
+		- `db.createUser()` and `db.dropUser()`.
+		- `db.dropDatabase()`.
+		- `db.createCollection()`.
+		- `db.serverStatus()`.
+		- `db.runCommand({[command]})`.
+		- `db.commandHelp("[command]")`.
+	- `db.[collection].[method]()` Collection-level methods.
+		-  `db.renameCollection()`.
+		- `db.collection.createIndex()`.
+		- `db.collection.drop()`
+	- `rs.[method]()` Controls replica sets.
+	- `sh.[method]()` Controls sharded clusters.
+
+#### Logging basics
+
+- Process log (ACCESS, COMMAND, CONTROL, FTDC, etc.)
+- Display log components: `db.getLogComponents()`. The higher the verbosity number, the more information shown.
+- Verbosity:
+	- `-1` Inherit from parent
+	- `0` Default verbosity, to include informational messages.
+	- `1-5` Increases the verbosity level to include debug messages.
+- Get admin logs: `db.adminCommand({"getLog": "global"})`.
+- Set the verbosity of a log category: `db.setLogLevel(0, "index")`.
+- Log dissection:
+	- Timestamp (`2020-01-13T20:05:50.008+000`).
+	- Severity level (F-Fatal, E-Error, W-Warning, `I`-Information (0), D-Debug (1-5)).
+	- Log component (`COMMAND`).
+	- Connection (`[conn3]`).
+	- Action and namespace (`command admin.$cmd`).
+	- Application that initiated the operation (`appName: "MongoDB Shell"`).
+	- The operations (`command: setParameter {setParameter: 1.0}`).
+	- Operation metadata (`numYields: 0 reslen:616 locks:{} 0ms`).
