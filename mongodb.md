@@ -441,3 +441,120 @@ mongo admin --host localhost:27000 --eval '
 	- Application that initiated the operation (`appName: "MongoDB Shell"`).
 	- The operations (`command: setParameter {setParameter: 1.0}`).
 	- Operation metadata (`numYields: 0 reslen:616 locks:{} 0ms`).
+
+#### Profiling the database
+
+- Profiler captures CRUD, admin, and cluster configuration options.
+- Profiler levels
+	- 0: Profiler is off and does not collect any data (default).
+	- 1: Profiler collects data for operations that take longer than value of slowms(slowms is how many miliseconds the action takes, and anything that takes longer than that will be logged).
+	- 2: Profile collects data for all operations.
+- Show current profiling level: `db.getProfilingLevel()`.
+- Set current profiling level: `db.setProfilingLevel(1)`. You can include the slowms setting: `db.setProfilingLevel(1, {slowms: 100})`. If it wasn't already there, either command will create a new collection called `system.profile` to keep the profiling data.
+
+#### Basic security: Part 1
+
+- Authentication
+	- Verifies the identity of a user.
+	- Answers the question: Who are you?
+- Authorization:
+	- Verifies the privileges of a user.
+	- Answers the question: What do you have access to?
+- Authentication methods:
+	- `SCRAM` (default) - Stands for salted challenge response authentication method.
+	- `X.509` - Certification for authentication. More secure yet more complicated.
+	- `LDAP` (enterprise only) - Stands for Lightweight directory access protocol.
+	- `KERBEROS` (enterprise only) - Works on the basis of tickets to allow nodes communicating over a non-secure network.
+- Intra-cluster authentication is also available.
+- Role-based access control system (RBAC).
+- Each `user` has one or more `roles`.
+- Each `role` has one or more `privileges`.
+- A `privilege` represents a `group` of actions and the resources those actions apply to. Example:
+	- DBA - Create user, create index.
+	- Developer - Write data, read data.
+	- Data scientist - Write data.
+
+#### Basic security: Part 2
+
+- Localhost exception:
+	- Allows you to access MongoDB server that enforces authentication but does not yet have a configured user for you to authenticate with.
+	- Must run Mongo shell from same host running the MongoDB server.
+	- The localhost exception closes after you create your first user.
+	- Always create a user with Administrative privileges first.
+- Create a new user:
+```javascript
+db.createUser({
+	user: "root",
+	pwd: "root123",
+	roles : ["root"]
+})
+```
+
+#### Built-in roles: Part 1
+
+- Role based access control.
+- Database `users` are granted `roles`.
+- Custom roles - Tailored roles to attend specific needs of sets of users.
+- Built-in roles - Pre-packaged MongoDB roles.
+- Role structure
+	- Set of privileges
+		- Actions performed over a resource.
+			- Resources can be replica sets (specific database and collection, all databases and all collections, or specific database and any collection), shard clusters.
+- Roles can inherit.
+- Network authentication restrictions.
+- Built-in roles:
+	- Database user (`read`, `readWrite` | `readAnyDatabase`, `readWriteAnyDatabase`).
+	- Database administration (`dbAdmin`, `userAdmin`, `dbOwner` | `dbAdminAnyDatabase`, `userAdminAnyDatabase`).
+	- Cluster administration (`clusterAdmin`, `clusterManager`, `clusterMonitor`, `hostManager`).
+	- Backup/restore (`backup`, `restore`).
+	- Super user (`root`).
+- All roles are on a per database system.
+
+#### Built-in roles: Part 2
+
+- This is the first user you should always create, because they can do everything for user management, but nothing with data management:
+```javascript
+db.createUser(
+	{ user: "security_officer",
+		pwd: "h3ll0th3r3",
+		roles: [ { db: "admin", role: "userAdmin" } ]
+	}
+)
+```
+- The next user to administer the databases (DDL - data definition language):
+```javascript
+db.createUser(
+	{ user: "dba",
+		pwd: "c1lynd3rs",
+			roles: [ { db: "admin", role: "dbAdmin" } ]
+	}
+)
+```
+- DML - Data modification language.
+- Grant roles to user: `db.grantRolesToUser( "dba",  [ { db: "playground", role: "dbOwner"  } ] )`.
+- Show role privileges: `db.runCommand( { rolesInfo: { role: "dbOwner", db: "playground" }, showPrivileges: true} )`.
+- First application user:
+```javascript
+db.createUser(
+	{ user: "m103-application-user",
+		pwd: "m103-application-pass",
+		roles: [ { db: "applicationData", role: "readWrite" } ]
+	}
+)
+```
+
+#### Server tools overview
+
+- Mongod - Core database process.
+- Mongo - Interactive MongoDB shell used to connect to Mongod.
+- `mongostat` - Give quick stats on a running Mongo process.
+- `mongorestore` and `mongodump` - Import and export Mongo dump files from MongoDB collections (in `BSON` format).
+	- Restore: `mongorestore --drop --port 30000 dump/`.
+	- Dump: `mongodump --port 30000 --db applicationData --collection products`.
+	- The `bson` file is the actual database data.
+	- The `json` file is meta data on the `bson` file.
+- `mongoexport` and `mongoimport` - Same as restore and dump, but this uses `json` files (or `csv`).
+	- Export as a `json` document: `mongoexport --port 30000 --db applicationData --collection products -o products.json`.
+	- Import: `mongoimport --port 30000 products.json`.
+- Add authentation to any of these commands: `-u "m103-application-user" -p "m103-application-pass" --authenticationDatabase "admin"`
+- Full command to import a dataset using authentication: `mongoimport --port 27000 /dataset/products.json --db applicationData --collection products -u "m103-application-user" -p "m103-application-pass" --authenticationDatabase "admin"`.
