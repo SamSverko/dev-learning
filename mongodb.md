@@ -558,3 +558,86 @@ db.createUser(
 	- Import: `mongoimport --port 30000 products.json`.
 - Add authentation to any of these commands: `-u "m103-application-user" -p "m103-application-pass" --authenticationDatabase "admin"`
 - Full command to import a dataset using authentication: `mongoimport --port 27000 /dataset/products.json --db applicationData --collection products -u "m103-application-user" -p "m103-application-pass" --authenticationDatabase "admin"`.
+
+---
+
+### Chapter 2: Replication
+
+#### What is replication?
+
+- MongoDB uses asynchronous replication.
+- Replication is the concept of maintaining multiple copies of your data.
+- Availability is also known as replication.
+- Databases without replication is called a stand-alone.
+- Replicated systems has extra nodes that holds copies of our data.
+- Replica set: A group of nodes that each have copies of the same data. All data is managed through the primary node, and the secondary nodes asynchronously copy the data from the primary.
+- Failover: If the primary goes down, then a secondary node steps up as the new primary.
+- The secondary nodes decide which one becomes the primary through an election (they actually vote to who should be the new primary).
+- Data replication can take two forms:
+	- Binary replication.
+		- Assumes the OS is consistent within the set.
+		- Pros: Less data, faster
+	- Statement-based replication.
+		- After a write is complete, the write is set to the Oplog, which is synced to the secondary nodes.
+		- Uses Idempotency - You can sync the Oplog over and over without anything changing.
+		- Pros: Not bound to operating system or dependency.
+
+#### MongoDB replica sets
+
+- Replica sets are groups of nodes that share the same data.
+- A replica can act as a primary set, or secondary set.
+- Asynchronous replication mechanism.
+- Replica sets provide a high availability and failover.
+- The read/writes are handled by the primary set.
+- The secondary sets then replicate the data from the primary.
+- PV1 - Protocol version 1.
+- Oplog - Operation log, a statement-based log.
+- The third kind of replica can be an Arbiter, this type:
+	- Holds no data.
+	- Can vote in an election.
+	- Cannot become the new primary.
+- You should always have an odd number of nodes in a replica sets.
+- You can have up to 50 members.
+- Only a maximum of 7 nodes can vote on an election.
+- It's recommended to avoid Arbiters entirely.
+- You can define a node as hidden, so that the data is hidden from the application, or even delaying the nodes to delay the replication process.
+
+#### Setting up a replica set
+
+- Initiate a replica set: `rs.initiate()`.
+- Connect to a mongo shell by specifying the replica set: `mongo --host "m103-example/192.168.103.100:27011" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"`.
+- Get status report of the replica set: `rs.status()`.
+- Add a replica to the set: `rs.add("m103:27012")`.
+- Get overview of the replica set topology: `rs.isMaster()`.
+- Safely step down the current primary, and create an election to elect a new primary: `rs.stepDown()`.
+
+#### Replication configuration document
+
+- JSON object that defines the configuration options of our replica set.
+- Can be configured manually from the shell.
+- There are set of mongo shell replication helper methods that make it easier to manage:
+	- `rs.add`.
+	- `rs.initiate`.
+	- `rs.remove`.
+	- `rs.reconfig`.
+	- `rs.config`.
+- `_id: m103-example`: The name of the replica set.
+- `version: 1`: Increments whenever we update the replica set (add a replica node, or change a line of the configuration).
+- `members: []`: Array of each node member.
+- Setting a `priority` level of `0` to a member essentially removes that nodes chance of ever becoming a primary.
+
+#### Replication commands
+
+- `rs.status()`.
+	- Reports health on replica set nodes.
+	- Uses data from heartbeats (it may be a few seconds out of date).
+- `rs.isMaster()`.
+	- Describes a node's role in the replica set.
+	- Shorter output than `rs.status()`.
+- `db.serverStatus()['repl']`.
+	- Section of the db.serverStatus() output.
+	- Similar to the output of `rs.isMaster()`.
+	- `rbid` - Number of rollbacks that has occured.
+- `rs.printReplicationInfo()`.
+	- Only returns oplog data relative to current node.
+	- Contains timestamps for the fist and last oplog events, and not the statement entered.
