@@ -641,3 +641,61 @@ db.createUser(
 - `rs.printReplicationInfo()`.
 	- Only returns oplog data relative to current node.
 	- Contains timestamps for the fist and last oplog events, and not the statement entered.
+
+#### Local DB: Part 1
+
+- Databases also act as namespaces.
+- A standalone has a local database, which only contains only a singular collection `startup_log`.
+- A replica set has a local database, which has more collections.
+- `oplog.rs` Keeps track of all statements being replicated in the set.
+- A capped collection is a collection that is capped to a specified size.
+
+#### Local DB: Part 2
+
+- `oplog.rs` Usually takes 5% of the available disk.
+- Replication window is how long it takes to fill up an oplog.
+- One operation may result in many `oplog.rs` entries.
+- What happens in the local database, stays in the local database.
+- Return only the last entry in the oplog: `db.oplog.rs.find( { "o.msg": { $ne: "periodic noop" } } ).sort( { $natural: -1 } ).limit(1).pretty()`.
+
+#### Reconfiguring the replica set
+
+- Add an arbiter to the replica set: `rs.addArb("m103:28000")`.
+- Remove a replica or arbiter from the replica set: `rs.remove("m103:28000")`.
+- Show the configuration of the replica set: `rs.conf()`.
+- Change values of the replica set configuration:
+```javascript
+cfg = rs.conf()
+cfg.members[3].votes = 0
+cfg.members[3].hidden = true
+cfg.members[3].priority = 0
+rs.reconfig(cfg)
+```
+
+#### Reads and writes on a replica set
+
+- To connect directly to a secondary replica, you must exclude the replica set name in the shell command (otherwise the shell will automatically redirect you to the primary): `mongo --host "m103:27012" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"`.
+- You can only run perform read operations when connected to a secondary replica.
+- Enable read commands on secondary replica: `rs.slaveOk()`.
+
+#### Failover and elections
+
+- Rolling upgrades happen on secondary nodes first, then the primary.
+- To update all nodes in a three node replica set. Update both secondary nodes. Step down the primary node to a secondary node. The newly demoted secondary node can now be upgraded. Now all three nodes are up to date.
+- Reconfiguring a replica set will always trigger an election, that may or may not elect a new primary.
+- Priority is the likelihood of that node becoming a primary after election.
+- Priority of zero can still vote in elections, but cannot run for election.
+- Nodes that aren't eligible to run for election are labeled as `passives`.
+
+#### Write concerns: Part 1
+
+- A write acknowledgment mechanism that developers can ad to write operations.
+- More durability definition means it takes more time.
+- Write concerns:
+	- `0` - Don't wait for acknowledgment.
+	- `1` (default) - Wait for acknowledgment from the primary only.
+	- `>= 2` - Wait for acknowledgment from the primary and one or more secondaries.
+	- `majority` - Wait for acknowledgment from a majority (number of nodes in replica set / 2, rounded up) of replica set members.
+- Write concern options:
+	- `wtimeout` Max amount of time the application will wait for the requested write concern before marking it as failed. The operation could have been successful (after the time limit), but it failed the test you put in place.
+	- `j` Each replica set node to commit the operation to the journal before returning acknowledgment.
