@@ -699,3 +699,74 @@ rs.reconfig(cfg)
 - Write concern options:
 	- `wtimeout` Max amount of time the application will wait for the requested write concern before marking it as failed. The operation could have been successful (after the time limit), but it failed the test you put in place.
 	- `j` Each replica set node to commit the operation to the journal before returning acknowledgment.
+
+#### Write concerns: Part 2
+
+- Stronger level of durability comes with a tradeoff, time. It will take longer.
+- MongoDB supports write concern for all cluster types: Standalone, replica set, and sharded clusters.
+- Insert data with a write concern of 3 and a timeout of 1000 miliseconds: `db.new_data.insert({"m103": "very fun"}, { writeConcern: { w: 3, wtimeout: 1000 }})`.
+
+#### Read concern
+
+- Acknowledgment management for read operations.
+- You can choose to return the most recent data in the cluster, or the data from the majority in the cluster.
+- Read concern levels:
+	- `local` - Default for primary members. In the one you are connected to.
+	- `available` (replica sets) - Default for secondary members.
+	- `majority` - When the data returned is from the majority of nodes.
+	- `linearizable` - Return majority of data, but provides read on write functionality.
+- Fast, safe, and latest data = Pick two.
+	- Fast and latest = `local` and `available`.
+	- Fast and safe = `majority`.
+	- Latest and safe = `linearizable`.
+- None of the read concerns require you to specify a write concern. However, reads with the read concern majority and linearizable will only return data that has been replicated to a majority of nodes in the replica set.
+
+#### Read preferences
+
+- Read preference is typically a driver-side setting.
+- Read preference modes:
+	- `primary` (default) - Routes all read operations to the primary.
+	- `primaryPreferred` - Routes all read operations to the primary, but if it's unavailable, it will route reads to the secondary.
+	- `secondary` - Only to the secondary
+	- `secondaryPreferred` - Only to the secondary member, but if it's unavailable, it will route reads to the secondary.
+	- `nearest` - Routes all read operations to the member with the lowest network latency, regardless of the member type. It also supports geographically local reads.
+- Secondary reads always have a chance of returning stale data.
+- To count all documents in a database: `db.collection.count()`.
+- Set read preference: `db.getMongo().setReadPref('secondary')`.
+
+---
+
+### Chapter 3: Sharding
+
+#### What is sharding?
+
+- Vertical scaling: Increasing the performance such as upgrading the RAM, CPU, or disk space.
+- Horizontal scaling: MongoDB method of scaling (called `Sharding`). You add more machines, and distribute the data amongst those machines.
+- Together, the shards make up a sharded cluster. Each shard is a replica set.
+- Mongos - Routing queries to the appropriate shard.
+- Mongos uses the metadata and config servers to know where the data is. This is using the config server replica set.
+
+#### When to shard
+
+- You don't need to shard right off the bat.
+- Before sharding, you should check these aspects of your dataset:
+	- Is it still economically viable to scale vertically (CPU, Network, RAM, disk space)?
+	- What would be the impact on operational tasks?
+- Horizontal scales allow for process parallelization of backup, restore, and initial sync.
+- General rule of thumb for maintaining datasets, the storage should be between 2-5 TB per server.
+- Single thread operations and geographically distributed data.
+- Zone sharding allows you to easily manage geographically distributed datasets.
+
+#### Sharding architecture
+
+- You can have any number amount of shards.
+- Clients don't talk to the shard directly, but to the mongos `router` you set up.
+- Each database will be assigned a primary shard.
+- If data is found from multiple shard, the `mongos` will perform a `SHARD_MERGE` to only send one dataset back to the client.
+- Non-sharded collections are placed on the primary shard.
+- The role of primary shard is subject to change since we can specify the configuration.
+- Shard merges are performed by the `mongos`.
+
+#### Setting up a sharded cluster
+
+- 
