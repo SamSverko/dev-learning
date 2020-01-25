@@ -53,8 +53,6 @@ Completed Courses:
 
 ## [Lynda](https://www.lynda.com/)
 
-In Progress:
-
 * [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer)
   * **Completed Chapters:** React.js Essential Training, Node.js Essential Training, Learning npm the Node Package Manager, Building a Website with Node.js and Express.js, Learning MongoDB, Express Essential Training, and Building RESTful Web APIs with Node.js and Express.
 
@@ -70,6 +68,7 @@ Completed Courses:
 Completed Courses:
 
 * [M001: MongoDB Basics](https://university.mongodb.com/mercury/M001/2019_December_17/overview) (January 2020)
+* [M103: Basic Cluster Administration](https://university.mongodb.com/mercury/M103/2020_January_7/overview) (January 2020)
 
 ---
 

@@ -769,4 +769,131 @@ rs.reconfig(cfg)
 
 #### Setting up a sharded cluster
 
+- Basic sharded cluster consists of one sharded replica set, one configuration sharded replica set (CSRS), and one mongos instance.
+- Once already connected to a mongod instance, you can authenticate after connected: `db.auth("username", "password")`.
+- Whenever you setup a mongod process confifuration, ensure you create the directory that it will be using: `mkdir /var/mongodb/db/[db-name]`.
+- Connect to mongos once configuration file is created: `mongo --port 26000 --username m103-admin --password m103-pass --authenticationDatabase admin`.
+- Start a `mongos` process: `mongos -f mongos.conf`.
+- View sharding status on `mongos`: `sh.status()`.
+- Add a shard to the mongos. You can specify any node because all the shards were already linked through their configuration file: `sh.addShard("m103-repl/192.168.103.100:27012")`.
+- The mongos configuration file doesn't need to have a dbpath.
+- The mongos configuration file needs to specify the config servers.
+- Remove a directory that's not empty: `rm -r [directory]`.
+
+#### Config db
+
+- You should generally never write any data to this database.
+- Switch to config db: `use config`.
+- You can now find information on databases, collections, shards, chunks, mongo: `db.databases.find()`.
+
+#### Shard keys
+
+- Index field to partition data in a sharded collection and distribute it amongst the shards.
+- Grouping of documents in a shard is called a `chunk`.
+- A shard key must be included in every document.
+- Indexes must exist first before you can select the indexed fields for your shard key.
+- Sharding is a permanent operation.
+	- You cannot change the shard key fields post-sharding.
+	- You cannot change the values of the shard key fields post-sharding.
+- Shard keys are permanent, you cannot unshard a sharded colleciton.
+- How to shard:
+	- Enabled sharding for the specified database: `sh.enableSharding("[database]")`.
+	- Create the index for your shard keys: `db.[collection].createIndex()`.
+	- Shard the collection: `sb.shardCollection("[database].[collection]", {[shard-key]})`.
+- All collections have an index on `id` by default.
+
+#### Picking a good shard key
+
+- You enable sharding on a database.
+- You shard a collection. Not all collections in sharding enabled database need to be sharded.
+- What makes a good shard key?
+	- High cadinality: Many possible unique shard key values.
+	- Low frequency: Low repetition of a given unique shard value.
+	- Non-monotonic change: Avoid shard keys that change at a steady and predictable state (non-linear changes in value).
+- Read isolation = MongoDB directs targeted queries to a single shard (extremely fast query).
+- Compound index has several keys rather than a single one.
+- Testing sharding in a testing environment before sharding a production environment.
+- Unsharding a collection is hard, you really want to avoid that.
+
+#### Hashed shard keys
+
+- Shard key where the underlying index is hashed.
+- The actual data remains untouched, it's just the underlying index of the shard that's hashed.
+- Monotonically-changing shard key values result in hotspotting (more inserts end up on a single shard).
+- Hashed shard keys provide more even distribution of monotonically-changing shard keys.
+- Queries on ranges of shard key values are more likely to be scatter-gather.
+- Cannot support geographically isolated read operations using zoned sharding.
+- Hashed indexes cannot be compounded.
+- Hashed index don't support fast sorting.
+- Create a hashed shard key:
+	- Enabled sharding for the specified database: `sh.enableSharding("[database]")`.
+	- Create the index for your shard keys: `db.[collection].createIndex({"[field]": "hashed"})`.
+	- Shard the collection: `sh.shardCollection("[database].[collection]", {[shard-key-field]: "hashed"})`.
+
+#### Chunks
+
+- Config servers hold the cluster metadata (how many databases are sharded, which databases are sharded, etc.).
+- Config servers also shown the mapping of how the shards are organized.
+- Find one document chunk: `db.chunks.findOne()`.
+- Chunks lower bound is inclusive, and chunks upper bound is exclusive.
+- ChunkSize = default is 64MB.
+- Change the chunk size on the `config db`: `db.settings.save({_id: "chunksize", value: 2})`.
+- Shard key values frequency plays a role in balancing chunks.
+- Jumbo chunks
+	- They are larger than defined chunk size.
+	- Cannot move jumbo chunks
+	- Once marked as jumbo the balancer skips these chunks and avoids trying to move them.
+	- In some cases these will not be able to be split.
+- Increasing the maximum chunk size can help eliminate jumbo chunks.
+- Chunk ranges have an inclusive minimum and an exclusive maximum.
+- Locate a chunk based on a specific document: `db.chunks.find().pretty()`.
+
+#### Balancing
+
+- MongoDB balancing identifies which chunks have too much data, and attempts to evenly distribute them amongst the shards.
+- The primary node of the config server is responsible for managing the balancer.
+- A balancer round can only balance number of chunks / 2.
+- Start the balancer: `sh.startBalancer(timeout, interval)`.
+- Stop the balancer: `sh.stopBalancer(timeout, interval)`.
+- Set the balancer: `sh.setBalancer(boolean)`.
+
+#### Queries in a sharded cluster
+
+- Mongos is the principle interface for handling with queries a sharded cluster.
+- Scatter-gather operations is where the `mongos` needs to look in multiple shards in the cluster to find data (slow queries).
+- Targeted (specified shard) versus scatter-gather (must look through multiple shards).
+- Cursor operators:
+	- `sort()` - `Mongos` pushes the sort to each shard and merge-sorts the results.
+	- `limit()` - `Mongos` passes the limit to each targeted shard, then re-applies the limit to the merged set of results.
+	- `skip()` - `Mongos` performs the skip against the merged set of results.
+- For a find() operation, the `mongos` that issued the query is responsible for merging the query results.
+
+#### Routed queries vs scatter gather: Part 1
+
+- Each shard contains chunks of sharded data, where each chunk represents an inclusive lower bound and exclusive upper bound of the dataset.
+- `minKey` = Lowest possible value (think minus infinity).
+- `maxKey` = Highest possible value (think positive infinity).
+- When you query with the shard index (e.g. `sku`), then mongos automatically knows which shard to direct the query to.
+- When the query does not contain the shard index, it must perform the scatter-gather query and all shards must return a response in order for the `mongos` to receive the data.
+- It is important that your shard index is used in the majority of your queries so as to keep up maximum efficient of queries.
+- Ranged queries on a hashed index are almost always scatter-gather.
+- If you are using a compound index, you can still perform a targeted query, you have to use the prefix. of it. Example, if the compound index was `{"sku": 1, "type": 1, "name", 1}`. Then `db.collection.find({"sku": ...})`, `db.collection.find({"sku": ..., "type": ...})`, and `db.collection.find({"sku": ..., "type": ..., "name": ...})` all work for targeted query. But `db.collection.find({"type": ...})` and `db.collection.find({"name": ...})` do not since they don't have the prefixes of the compound index.
+
+#### Routed queries vs scatter gather: Part 2
+
+- Find a document and explain how it was found: `db.products.find({"sku" : 1000000749 }).explain()`.
+- `"stage": "SINGLE_SHARD"` the `mongos` was able to retrieve the data from a single shard and not merged results.
+- `"stage": "SHARD_MERGE"` the `mongos` retrieved the data from a merge (multiple shards too).
+- `SHARDING_FILTER`: The step performed by `mongos` used to make sure that documents fetched from a particular shard are supposed to be from that shard. To do this, mongos compares the shard key of the document with the metadata on the config servers.
+- `IXSCAN`: An index scan, used to scan through index keys.
+- `FETCH`: A document fetch, used to retrieve an entire document because one or more of the fields is necessary.
+- The sharding filter ensures that documents returned by each shard are not orphan documents. It does this by comparing the value of the shard key to the chunk ranges inside that particular shard.
+- `Mongos` will try to minimize the number of documents checked by the shard filter. To do this, `mongos` will only send the documents matching the query (i.e. are returned by the index scan) to be compared against the chunk ranges.
+
+---
+
+## M121: The MongoDB aggregation framework
+
+### Chapter 0: Introduction and aggregation concepts
+
 - 
