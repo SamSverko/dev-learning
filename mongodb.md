@@ -896,4 +896,45 @@ rs.reconfig(cfg)
 
 ### Chapter 0: Introduction and aggregation concepts
 
+#### Introduction to the MongoDB aggregation framework
+
+- Expressive filtering, powerful data transformation, statistical utilities, and data analysis.
+- Much more work with a single query.
+
+#### Atlas requirement
+
+- We have access to 27017!
+- Atlas is MongoDB's cloud hosting service.
+- Connect to the class Atlas: `mongo "mongodb://cluster0-shard-00-00-jxeqq.mongodb.net:27017,cluster0-shard-00-01-jxeqq.mongodb.net:27017,cluster0-shard-00-02-jxeqq.mongodb.net:27017/aggregations?replicaSet=Cluster0-shard-0" --authenticationDatabase admin --ssl -u m121 -p aggregations --norc`
+
+#### The concept of pipelines
+
+- A pipeline is a composition of stages.
+- Stages configurable for transformation. Stages can be arranged in any way.
+- Documents flow like like an assembly line.
+- Conveyor belt in a factory, along the line, there are different stages.
+- Documents enter the pipeline, and go through the first stage, `$match`.
+- The second stage is `$project`, and the next stage is `$group`.
+
+#### Aggregation structure and syntax
+
+- Pipelines may consist of one or more stages.
+- Each stage is a JSON object of key value pairs.
+- Each stage is either an operator or expression.
+- Visit the MongoDB [Aggregation pipeline quick reference](https://docs.mongodb.com/manual/meta/aggregation-quick-reference/).
+- Operators mean query operators or aggregation stages.
+- Operators always appear in the key position of a document.
+- Expressions act a lot like functions.
+- Variable types:
+	- Field path: `$fieldName`.
+	- System variable: `$$UPPERCASE`.
+	- User variable" `$$foo`.
+- Some expressions can only be used in certian stages.
+
+---
+
+### Chapter 1: Basic aggregation - $match and $project
+
+#### $match: Filtering documents
+
 - 
