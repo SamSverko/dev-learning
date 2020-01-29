@@ -929,7 +929,7 @@ rs.reconfig(cfg)
 	- Field path: `$fieldName`.
 	- System variable: `$$UPPERCASE`.
 	- User variable" `$$foo`.
-- Some expressions can only be used in certian stages.
+- Some expressions can only be used in certan stages.
 
 ---
 
@@ -937,4 +937,190 @@ rs.reconfig(cfg)
 
 #### $match: Filtering documents
 
-- 
+- This is an aggregation operator, so we must append the `$` before it.
+- Basic syntax:
+```javascript
+db.collection.aggregate([{
+	$match: {
+		type: {
+			$ne: "Star"
+		}
+	}
+}])
+```
+- `$match` is more of a filter, more than a find.
+- `$match` uses standard MongoDB query operators (comparison, logic, arrays).
+- Where cannot use the `$where` operator with `$match`.
+- `$match` should always come early in the pipeline.
+- `$match` does not allow for projection.
+- A `$match` stage may contain a `$text` query operator, but it must be the first stage of a pipeline.
+
+#### Lab - $match
+
+- Help MongoDB pick a movie our next movie night! Based on employee polling, we've decided that potential movies must meet the following criteria.
+	- `imdb.rating` is at least 7.
+	- `genres` does not contain "Crime" or "Horror".
+	- `rated` is either "PG" or "G".
+	- `languages` contains "English" and "Japanese".
+- Answer:
+```JavaScript
+// Since selectors in MongoDB filters are `AND`ed together by default, you can omit the $and operator:
+var pipeline = [{
+	$match: {
+		"imdb.rating": { $gte: 7 },
+		"genres": {$nin: ["Crime", "Horror"]},
+		"rated": {$in: ["PG", "G"]},
+		"languages": {$all: ["English", "Japanese"]}
+	}
+}];
+// But if you wish to include the $and operator, you can do so:
+var pipeline = [{
+	$match: {
+		$and: [
+			{"imdb.rating": { $gte: 7 }},
+			{"genres": {$nin: ["Crime", "Horror"]}},
+			{"rated": {$in: ["PG", "G"]}},
+			{"languages": {$all: ["English", "Japanese"]}}
+		]
+	}
+}];
+```
+
+#### Shaping documents with $project
+
+- We can remove and retain field, and derive entirely new field.
+- `$project` is like the map function.
+- Sample `$project` syntax: `db.collection.aggregate([{ $project: {} }])`.
+- The `_id` field is the only field that must be explicitly removed in order for it to be removed from the query.
+- Selecting subfield must be surrounded in quotes: `"imdb.rating"`.
+- Reassign the value to that field: `$project: {_id: 0, name: 1, gravity: "$gravity.value"}`.
+- Multiple values together: `$multiply: [gravityRatio, weightOnEarth]`, or divide (same format, it divides the first number by the second).
+- Use data to be altered and then assigned to a new value:
+```javascript
+$project: {
+	_id: 0,
+	name: 1,
+	myWeight: {
+		$multiply: [{$divide: ["$gravity.value", 9.8]}, 86]
+	}
+}
+```
+
+#### Lab - Changing document shape with $project
+
+- Using the same $match stage from the previous lab, add a $project stage to only display the the title and film rating (title and rated fields).
+Answer:
+```javascript
+var pipeline = [
+	{
+		$match: {
+			$and: [
+				{"imdb.rating": { $gte: 7 }},
+				{"genres": {$nin: ["Crime", "Horror"]}},
+				{"rated": {$in: ["PG", "G"]}},
+				{"languages": {$all: ["English", "Japanese"]}}
+			]
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			title: 1,
+			rated: 1
+		}
+	}
+];
+```
+
+#### Lab - Computing fields
+
+- Using the Aggregation Framework, find a count of the number of movies that have a title composed of one word. To clarify, "Cinderella" and "3-25" should count, where as "Cast Away" would not.
+- Answer:
+```JavaScript
+var pipeline = [
+	{
+		$project: {
+			"_id": 0,
+			"titleSplit": {$split: ["$title", " "]}
+		}
+	},
+	{
+		$match: {
+			"titleSplit": {
+				$size: 1
+			}
+		}
+	}
+];
+```
+
+#### Optional Lab - Expressions with $project
+
+- `$map` lets us iterate over an array, element by element, performing some transformation on each element. The result of that transformation will be returned in the same place as the original element.
+- Within `$map`, the argument to `input` can be any expression as long as it resolves to an array. The argument to `as` is the name of the variable we want to use to refer to each element of the array when performing whatever logic we want. The field `as` is optional, and if omitted each element must be referred to as `$$this`. The argument to in is the expression that is applied to each element of the input array, referenced with the variable name specified in as, and prepending two dollar signs:
+```javascript
+writers: {
+	$map: {
+		input: "$writers",
+		as: "writer",
+		in: {
+			$arrayElemAt: [
+				{
+					$split: [ "$$writer", " (" ]
+				},
+				0
+			]
+		}
+	}
+}
+```
+- Find how many movies in our movies collection are a "labor of love", where the same person appears in cast, directors, and writers.
+- Answer:
+```javascript
+db.movies.aggregate([
+	{
+		$match: {
+			cast: { $elemMatch: { $exists: true } },
+			directors: { $elemMatch: { $exists: true } },
+			writers: { $elemMatch: { $exists: true } }
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			cast: 1,
+			directors: 1,
+			writers: {
+				$map: {
+					input: "$writers",
+					as: "writer",
+					in: {
+						$arrayElemAt: [
+							{
+								$split: ["$$writer", " ("]
+							},
+							0
+						]
+					}
+				}
+			}
+		}
+	},
+	{
+		$project: {
+			labor_of_love: {
+				$gt: [
+					{ $size: { $setIntersection: ["$cast", "$directors", "$writers"] } },
+					0
+				]
+			}
+		}
+	},
+	{
+		$match: { labor_of_love: true }
+	},
+	{
+		$count: "labors of love"
+	}
+]);
+```
