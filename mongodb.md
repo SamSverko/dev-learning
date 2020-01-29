@@ -1124,3 +1124,316 @@ db.movies.aggregate([
 	}
 ]);
 ```
+
+---
+
+### Chapter 2: Basic aggregation - utility stages
+
+#### $addFields and how it is similar to $project
+
+- This ad fields to a document, whereas `$project` can remove and change fields.
+- This appends new fields to the document.
+
+#### geoNear stage
+
+- Aggregation framework solution to performing geo queries within the aggregation pipeline.
+- `$geoNear` must be the first query in the pipeline if used.
+- This can be used on sharded collections, whereas `$near` cannot.
+- Required arguments:
+	- `near` - Point.
+	- `distance` - Distance from MongoDB.
+	- `spherical` - Boolean.
+- The collection can only have one 2dsphere index.
+- If using 2dsphere, the distance is returned in meters. If using legacy coordinates, the distance is returned in radians.
+
+#### Cursor-like stages: Part 1
+
+- These are the cursor methods:
+	- The order you get documents are the "natural order", meaning when the documents were inserted into the database.
+	- You can skip documents when searching for them: `db.solarSystem.find({}, {_id: 0, name: 1, numberOfMoons: 1}).skip(5).pretty();`.
+	- You can limit the number of documents returned: `db.solarSystem.find({}, {_id: 0, name: 1, numberOfMoons: 1}).limit(5).pretty();`.
+	- You can sort the documents returned: `db.solarSystem.find({}, {_id: 0, name: 1, numberOfMoons: 1}).sort({numberOfMoons: -1}).pretty();`. A value of `1` is ascending, a value of `-1` is descending.
+- Cursor stages:
+	- `$limit`, `$skip`, `$count`, `$count`.
+	```javascript
+	db.solarSystem.aggregate([
+		{
+			$project: {
+				_id: 0,
+				name: 1,
+				numberOfMoons: 1
+			}
+		},
+		{
+			$limit: 5
+		}
+	]);
+	```
+
+#### Cursor-like stages: Part 2
+
+- `$count` stage counts all incoming documents:
+```javascript
+db.solarSystem.aggregate([
+	{
+		$match: {
+			type: "Terrestrial planet"
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			name: 1,
+			numberOfMoons: 1
+		}
+	},
+	{
+		$count: "terrestrial planets"
+	}
+]);
+```
+- `$sort` Sorts the data:
+```javascript
+db.solarSystem.aggregate([
+	{
+		$project: {
+			_id: 0,
+			name: 1,
+			numberOfMoons: 1
+		}
+	},
+	{
+		$sort: {numberOfMoons: -1}
+	}
+]);
+```
+- The sort field is not limited to one field.
+- Sort aggregations are limited to 100MB of RAM, you can allow excess of this by adding: `{allowDiskUse: true}`.
+
+#### $sample stage
+
+- Select a set of random documents in a collection.
+- First method: `{$sample: { size: < N, how many documents>}}`. When:
+	- N <= 5% of number of documents in source collection, AND
+	- Source collection has >= 100 documents, AND
+	- $sample is the first stage.
+	- Then a sudo-random cursor will select the random documents to be passed.
+- Second method: `{$sample: { size: < N, how many documents>}}`. When:
+	- All other conditions.
+	- In-memory random sort.
+- Useful when working with large amounts of data. Can be used to randomly search data for whatever reason.
+
+#### Lab - Using cursor-like stages
+
+- Using these as the favourites: `["Sandra Bullock", "Tom Hanks", "Julia Roberts", "Kevin Spacey", "George Clooney"]`, for movies released in the `USA` with a `tomatoes.viewer.rating` greater than or equal to `3`, calculate a new field called `num_favs` that represents how many favorites appear in the cast field of the movie.
+- Sort your results by num_favs, tomatoes.viewer.rating, and title, all in descending order.
+- What is the title of the 25th film in the aggregation result?
+- Answer:
+```JavaScript
+// My answer
+db.movies.aggregate([
+	{
+		$match: {
+			"cast": {$in: ["Sandra Bullock", "Tom Hanks", "Julia Roberts", "Kevin Spacey", "George Clooney"]},
+			"countries": {$in: ["USA"]},
+			"tomatoes.viewer.rating": {$gte: 3}
+		}
+	},
+	{
+		$project: {
+			"_id": 0,
+			"cast": {
+				$filter: {
+					input: "$cast",
+					as: "member",
+					cond: {
+						$in: ["$$member", ["Sandra Bullock", "Tom Hanks", "Julia Roberts", "Kevin Spacey", "George Clooney"]]
+					}
+				}
+			},
+			"countries": 1,
+			"title": 1,
+			"tomatoes.viewer.rating": 1
+		}
+	},
+	{
+		$addFields: {
+			"num_favs": {
+				$size: "$cast"
+			}
+		}
+	},
+	{
+		$sort: {
+			"num_favs": -1,
+			"tomatoes.viewer.rating": -1,
+			"title": -1
+		}
+	},
+	{
+		$skip: 24
+	},
+	{
+		$limit: 1
+	}
+]);
+// their answer
+var favorites = [
+	"Sandra Bullock",
+	"Tom Hanks",
+	"Julia Roberts",
+	"Kevin Spacey",
+	"George Clooney"
+];
+
+db.movies.aggregate([
+	{
+		$match: {
+			"tomatoes.viewer.rating": { $gte: 3 },
+			countries: "USA",
+			cast: {
+				$in: favorites
+			}
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			title: 1,
+			"tomatoes.viewer.rating": 1,
+			num_favs: {
+				$size: {
+					$setIntersection: [
+						"$cast",
+						favorites
+					]
+				}
+			}
+		}
+	},
+	{
+		$sort: { num_favs: -1, "tomatoes.viewer.rating": -1, title: -1 }
+	},
+	{
+		$skip: 24
+	},
+	{
+		$limit: 1
+	}
+])
+```
+
+#### Lab - Bringing it all together
+
+- Calculate an average rating for each movie in our collection where English is an available language, the minimum `imdb.rating` is at least 1, the minimum `imdb.votes` is at least 1, and it was released in `1990` or after. You'll be required to rescale (or normalize) `imdb.votes`.
+
+What film has the lowest `normalized_rating`?
+- Answer:
+```javascript
+// my answer
+db.movies.aggregate([
+	{
+		$match: {
+			"languages": {$in: ["English"] },
+			"imdb.rating": {$gte: 1},
+			"imdb.votes": {$gte: 1},
+			"year": {$gte: 1990}
+		}
+	},
+	{
+		$addFields: {
+			"scaled_votes": {
+				$add: [
+					1,
+					{
+						$multiply: [
+							9,
+							{
+								$divide: [
+									{ $subtract: ["$imdb.votes", 5] },
+									{ $subtract: [1521105, 5] }
+								]
+							}
+						]
+					}
+				]
+			}
+		}
+	},
+	{
+		$addFields: {
+			"normalized_rating": {
+				$avg: ["$scaled_votes", "$imdb.rating"]
+			}
+		}
+	},
+	{
+		$project: {
+			"_id": 0,
+			"title": 1,
+			"languages": 1,
+			"normalized_rating": 1,
+			"imdb.rating": 1,
+			"imdb.votes": 1,
+			"scaled_votes": 1,
+			"year": 1
+		}
+	},
+	{
+		$sort: {
+			"normalized_rating": 1
+		}
+	},
+	{
+		$limit: 1
+	}
+]);
+// their answer
+db.movies.aggregate([
+	{
+		$match: {
+			year: { $gte: 1990 },
+			languages: { $in: ["English"] },
+			"imdb.votes": { $gte: 1 },
+			"imdb.rating": { $gte: 1 }
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			title: 1,
+			"imdb.rating": 1,
+			"imdb.votes": 1,
+			normalized_rating: {
+				$avg: [
+					"$imdb.rating",
+					{
+						$add: [
+							1,
+							{
+								$multiply: [
+									9,
+									{
+										$divide: [
+											{ $subtract: ["$imdb.votes", 5] },
+											{ $subtract: [1521105, 5] }
+										]
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		}
+	},
+	{ $sort: { normalized_rating: 1 } },
+	{ $limit: 1 }
+])
+```
+
+---
+
+### Chapter 3: Core aggregation - Combining information
+
+#### The $group stage
