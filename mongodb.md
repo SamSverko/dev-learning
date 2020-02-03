@@ -1437,3 +1437,81 @@ db.movies.aggregate([
 ### Chapter 3: Core aggregation - Combining information
 
 #### The $group stage
+
+- The only required field is the `_id` field.
+- It may be necessary to sanitize incoming data.
+- Group movies by their year, count how many are per year, then sort them:
+```javascript
+db.movies.aggregate([
+	{
+		$group: {
+			_id: "$year",
+			num_films_in_year: {
+				$sum: 1
+			}
+		}
+	},
+	{
+		$sort: {
+			num_films_in_year: -1
+		}
+	}
+]);
+```
+- Find the average metacritic score:
+```javascript
+db.movies.aggregate([
+	{
+		$match: {
+			metacritic: {
+				$gte: 0
+			}
+		}
+	},
+	{
+		$group: {
+			_id: null,
+			averageMetacritic: {
+				$avg: "$metacritic"
+			}
+		}
+	}
+]);
+```
+
+#### Accumulator stages in $project
+
+- Accumulator expressions in `$project` operate over an array in the current document, they do not carry values over all documents.
+- Expressions have no memory between documents.
+- Get the average max high price for ice cream sales:
+```javascript
+db.icecream_data.aggregate([
+	{
+		$project: {
+			_id: 0,
+			max_high: {
+				$max: "$trends.avg_high_tmp"
+			}
+		}
+	}
+]);
+```
+
+- Get the standard price index and standard deviation:
+```javascript
+db.icecream_data.aggregate([
+	{
+		$project: {
+			_id: 0,
+			average_cpi: {
+				$avg: "$trends.icecream_cpi"
+			},
+			cpi_deviation: {
+				$stdDevPop: "$trends.icecream_cpi"
+			}
+		}
+	}
+]);
+```
+
+####
