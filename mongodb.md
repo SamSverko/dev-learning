@@ -1736,4 +1736,171 @@ db.air_routes.aggregate([
 
 #### $graphLookup introduction
 
-- 
+- Dynamic data structures, and scalability.
+- We can have flat documents, or deeply nested schemas.
+- MongoDB is designed to be a general-purpose database.
+- Transitive closure.
+- Syntax:
+```javascript
+$graphLookup: {
+	from: , // lookup table
+	startWith: , // expression for value to start from
+	connectFromField: , // field name to connect to
+	connectToField: , // field name to connect to
+	as: , // field name for result array
+	maxDepth: , // optional, number of iterations to perform
+	depthField: , // optional, field name for number of iterations to reach this node
+	restrictSearchWithMatch: , // optional, match condition to apply to lookup
+}
+```
+
+#### $graphLookup: Simple lookup
+
+- Find all those who report to Eliot:
+```javascript
+db.parent_reference.aggregate([
+	{
+		$match: {
+			"name": "Eliot"
+		}
+	},
+	{
+		$graphLookup: {
+			from: "parent_reference",
+			startWith: "$_id",
+			connectFromField: "_id",
+			connectToField: "reports_to",
+			as: "all_reports"
+		}
+	}
+]).pretty();
+```
+- Find all the bosses of Shannon:
+```JavaScript
+db.parent_reference.aggregate([
+	{
+		$match: {
+			"name": "Shannon"
+		}
+	},
+	{
+		$graphLookup: {
+			from: "parent_reference",
+			startWith: "$reports_to",
+			connectFromField: "reports_to",
+			connectToField: "_id",
+			as: "bosses"
+		}
+	}
+]).pretty();
+```
+- `connectToField` will be used on recursive find operations.
+- `connectFromField` value will be use to match `connectToField` in a recursive match.
+
+#### $graphLookup: Simple lookup reverse schema
+
+- Get all reports recursively from array of direct reports:
+```javascript
+db.child_reference.aggregate([
+	{
+		$match: {
+			"name": "Dev"
+		}
+	},
+	{
+		$graphLookup: {
+			from: "child_reference", // self lookup (it's own collection)
+			startWith: "$direct_reports", // start at the field direct_reports
+			connectFromField: "direct_reports", // whenever it finds another direct_reports field, search recursively
+			connectToField: "name", // save the name field data
+			as: "all_reports" // save returned data inside all_reports field
+		}
+	}
+]).pretty();
+```
+
+#### $graphLookup: maxDepth and depthField
+
+- Depth works like array, starting at zero (zero is one level deep, and one is two levels deep, etc.).
+-  `depthField` indicates how many recursive lookups were needed to find the data, `depthField: 'level'`. `'level'` refers to what the field name will be called.
+- `maxDepth` only takes `$long` values.
+- `depthField` determines a field, which contains the value number of documents matched by the recursive lookup.
+
+#### $graphLookup: Cross collection lookup
+
+- You can lookup other collections.
+- Using `restrictSearchWithMatch: {"airline.name": "TAP Portugal"}`, will restrict the data returned if it matches the query.
+
+#### $graphLookup: General considerations
+
+- Memory allocation, `$allowDiskUse`.
+- Indexes, `connectToField`.
+- Sharding, we cannot use a shard collection in our `from` collection.
+- `$match`, unrelated match stages do not get pushed before `graphLookup` in our pipeline.
+- `$graphLookup` can be used in any position of the pipeline and acts in the same way as a regular $lookup.
+
+#### Lab: $graphLookup
+
+- Find the list of all possible distinct destinations, with at most one layover, departing from the base airports of airlines that make part of the "OneWorld" alliance. The airlines should be national carriers from Germany, Spain or Canada only. Include both the destination and which airline services that location.
+- Answer:
+```javascript
+db.air_alliances.aggregate([
+	{ // This pipeline takes the most selective collection first, air_alliances, matching the document refering to the OneWorld alliance.
+		$match: { name: "OneWorld" }
+	},
+	{ // It then iterates, with maxDepth 0 on the air_airlines collection to collect the details on the airlines, specially their base airport, but restricting that $lookup to airlines of the requested countries [Spain, Germany, Canada], using restrictSearchWithMatch.
+		$graphLookup: {
+			startWith: "$airlines",
+			from: "air_airlines",
+			connectFromField: "name",
+			connectToField: "name",
+			as: "airlines",
+			maxDepth: 0,
+			restrictSearchWithMatch: {
+				country: { $in: ["Germany", "Spain", "Canada"] }
+			}
+		}
+	},
+	{ // We then iterate over all routes up to maximum of one layover by setting our maxDepth to 1. We find all possible destinations when departing from the base airport of each carrier by specify $airlines.base in startWith
+		$graphLookup: {
+			startWith: "$airlines.base",
+			from: "air_routes",
+			connectFromField: "dst_airport",
+			connectToField: "src_airport",
+			as: "connections",
+			maxDepth: 1
+		}
+	},
+	{ // We now have a document with a field named connections that is an array of all routes that are within 1 layover. We use a $project here to remove unnecessary information from the documents. We also need to include information about valid airlines that match our initial restriction and the name of the current airline.
+		$project: {
+			validAirlines: "$airlines.name",
+			"connections.dst_airport": 1,
+			"connections.airline.name": 1
+		}
+	},
+	{ $unwind: "$connections" },
+	{ // After this, we'll unwind our connections array, and then use $project to add a field representing whether this particular route is valid, meaning it is a route flown by one of our desired carriers.
+		$project: {
+			isValid: {
+				$in: ["$connections.airline.name", "$validAirlines"]
+			},
+			"connections.dst_airport": 1
+		}
+	},
+	{ $match: { isValid: true } },
+	{ // Lastly, we use $match to filter out invalid routes, and then $group them on the destination.
+		$group: {
+			_id: "$connections.dst_airport"
+		}
+	}
+]);
+// An important aspect to this pipeline is that the first $graphLookup will act as a regular $lookup since we are setting a maxDepth to zero. The reason why we are taking this approach is due to the match restriction that $graphLookup allows, which can make this stage more efficient.
+```
+
+---
+
+### Chapter 4: Core aggregation - Multidimensional grouping
+
+#### Facets: introduction
+
+-
