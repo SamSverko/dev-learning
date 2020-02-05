@@ -1903,4 +1903,286 @@ db.air_alliances.aggregate([
 
 #### Facets: introduction
 
--
+- Manipulate, inspect, and analyze data.
+- Application SLA = Service level agreement
+- Faceting navigating - Enabling developers to creating interfaces to characterize query results.
+- Faceting = Analytics capability.
+- Facets are powered by the aggregate framework including:
+	- Manual and auto bucketing.
+	- Single facet query.
+	- Rendering multiple facets.
+
+#### Facets: Single facet query
+
+- `$sortByCount` example:
+```javascript
+db.companies.aggregate([
+	{
+		$match: {
+			"$text": {
+				"$search": "network"
+			}
+		}
+	},
+	{
+		"$sortByCount": "$category_code"
+	}
+]);
+```
+- Single query facets are supported by the new aggregation pipeline stage `$sortByCount`.
+- As like any other aggregation pipelines, except for `$out`, we can use the output of this stage, as input for downstream stages and operators, manipulating the dataset accordingly.
+
+#### The $bucket stage
+
+- `$bucket` syntax:
+```javascript
+// syntax
+$bucket: {
+	groupBy: // groups on evaluated express, only 1 expression
+	boundaries: // array of values with the lower inclusive group and exclusive upper bound, must use at least 2. They must all be the same type.
+	default: // optional, if the value is not in the bucket, you can specify a default value to be placed
+	output: {
+		output1: //accumulator expression
+		// ...
+	}
+}
+// example
+db.movies.aggregate([
+	{
+		$bucket: {
+			groupBy: "$imdb.rating",
+			boundaries: [0, 5, 8, Infinity],
+			default: "not rated",
+			output: {
+				average_per_bucket: {
+					$avg: "$imdb.rating"
+				},
+				count: {
+					$sum: 1
+				}
+			}
+		}
+	}
+]);
+```
+
+#### Facets: Manual buckets
+
+- Buckets are usually grouped by values between a minimum and maximum, inside the boundaries.
+- All boundaries must have the same value.
+
+#### The $bucketAuto stage
+
+- `$bucketAuto` syntax:
+```javascript
+// syntax
+$bucket: {
+	groupBy: // groups on evaluated express, only 1 expression
+	buckets: // integer to calculate the number of buckets for the script to calculate automatically what the boundaries are. This may be less than what we specify if we specify 10, but only have 8 items in the collection
+	output: {
+		output1: //accumulator expression
+		// ...
+	},
+	granularity: // optional, attempt to organize using the product theories (renard, power of 2, etc.)
+}
+// example
+db.movies.aggregate([
+	{
+		$match: {
+			"imdb.rating": {
+				$gte: 0
+			}
+		}
+	},
+	{
+		$bucketAuto: {
+			groupBy: "$imdb.rating",
+			buckets: 4,
+			output: {
+				average_per_bucket: {
+					$avg: "$imdb.rating"
+				},
+				count: {
+					$sum: 1
+				}
+			}
+		}
+	}
+]);
+```
+
+#### Facets: Auto buckets
+
+- The `granularity` parameter refers to theories of number organization (R5, R20, etc.).
+- Given a number of buckets, try to distribute documents evenly accross buckets.
+- Adhere bucket boundaries to a numerical series set by the `granularity` option.
+
+#### Facets: Multiple facets
+
+- `$facet: {}`.
+- Facets are sort of like sub-pipelines.
+- The `$facet` stage allows several sub-pipelines to be executed to produce multiple facets.
+- The `$facet` stage allows the application to generate several different facets with one single database request.
+
+#### Lab - $facets
+
+- How many movies are in both the top ten highest rated movies according to the imdb.rating and the metacritic fields? We should get these results with exactly one access to the database.
+- Answer:
+```JavaScript
+db.movies.aggregate([
+	{ // We begin with a $match and $project stage to only look at documents with the relevant fields, and project away needless information
+		$match: {
+			metacritic: { $gte: 0 },
+			"imdb.rating": { $gte: 0 }
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			metacritic: 1,
+			imdb: 1,
+			title: 1
+		}
+	},
+	{ // Next follows our $facet stage. Within each facet, we need sort in descending order for metacritic and imdb.ratting and ascending for title, limit to 10 documents, then only retain the title
+		$facet: {
+			top_metacritic: [
+				{
+					$sort: {
+						metacritic: -1,
+						title: 1
+					}
+				},
+				{
+					$limit: 10
+				},
+				{
+					$project: {
+						title: 1
+					}
+				}
+			],
+			top_imdb: [
+				{
+					$sort: {
+						"imdb.rating": -1,
+						title: 1
+					}
+				},
+				{
+					$limit: 10
+				},
+				{
+					$project: {
+						title: 1
+					}
+				}
+			]
+		}
+	},
+	{ // Lastly, we use a $project stage to find the intersection of top_metacritic and top_imdb, producing the titles of movies in both categories
+		$project: {
+			movies_in_both: {
+				$setIntersection: ["$top_metacritic", "$top_imdb"]
+			}
+		}
+	}
+]);
+```
+
+#### The $sortByCount stage
+
+- It takes only one argument.
+- Syntax: `{$sortByCount: "$imdb.rating"}`.
+- Is equivalent to a group stage to count occurrence, and then sorting in descending order.
+
+---
+
+### Chapter 5: Miscellaneous Aggregation
+
+#### The $redact stage
+
+- Syntax: `$redact: [expression]`.
+- One of three expressions:
+	- `$$DESCEND` - Retain this level, escept for sub-documents and arrays of documents.
+	- `$$PRUNE` - Exclude all fields at the current document level without further document inspection.
+	- `$$PRUNE` - Include all fields at the current document level without further document inspection.
+- Example:
+```JavaScript
+db.employees.aggregate([
+	{
+		$redact: {
+			$cond: [
+				{
+					$in: ["Management", "$acl"]
+				},
+				"$$DESCEND",
+				"$$PRUNE"
+			]
+		}
+	}
+]).pretty();
+```
+- `$$KEEP` and `$$PRUNE` automatically apply to all levels below the evaluated level.
+- `$$DESCEND` retains the current level and evaluates the next level down.
+- `$redact` is not for restricting access to a collection.
+
+#### The $out stage
+
+- Syntax: `$out: "output_collection"`.
+- Must be the last stage of the pipeline.
+- Must not be part of a facet.
+- Creates collections in the same database as the source collection.
+- Creates a new collection for the pipeline output, or overwrite collection if specified.
+- Honours indexes on existing collections.
+- Will not create or overwrite data is pipeline errors.
+
+#### Views
+
+- From the user, views are perceived as collections.
+- Views allow us to create vertical (performed through the use of a `$project` stage, modifying individual documents) and horizontal (performed through the use of a `$match` stage, changes the number of documents returned, not the shape) slices of our collections.
+- Example:
+```javascript
+db.createView("bronze_banking", "customers", [
+	{
+		"$match": { "accountType": "bronze" }
+	},
+	{
+		"$project": {
+			"_id": 0,
+			"name": {
+				"$concat": [
+					{ "$cond": [{ "$eq": ["$gender", "female"] }, "Miss", "Mr."] },
+					" ",
+					"$name.first",
+					" ",
+					"$name.last"
+				]
+			},
+			"phone": 1,
+			"email": 1,
+			"address": 1,
+			"account_ending": { "$substr": ["$accountNumber", 7, -1] }
+		}
+	}
+]);
+```
+- Views have some restrictions:
+	- No write operations.
+	- No index operations.
+	- No renaming.
+	- Collation restrictions.
+	- No `mapReduce`.
+	- No `$text`.
+	- No `geoNear` or `$geoNear`.
+	- `find()` operations with projection operators are not permitted (`$`, `$elemMatch`, `$slice`, `$meta`).
+- View definitions are public.
+- Avoid referring to sensitive fields within the pipeline.
+- Views contain no data themselves. They are created on demand and reflect the data in the source collection.
+- View performance can be increased by creating the appropriate indexes on the source collection.
+
+---
+
+### Chapter 6: Aggregation performance and pipeline optimization
+
+#### Aggregation performance
