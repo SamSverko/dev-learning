@@ -1514,4 +1514,38 @@ db.icecream_data.aggregate([
 ]);
 ```
 
-####
+#### Lab - $group and accumulators
+
+- For all films that won at least 1 Oscar, calculate the standard deviation, highest, lowest, and average imdb.rating. Use the sample standard deviation expression.
+- HINT - All movies in the collection that won an Oscar begin with a string resembling one of the following in their awards field: `Won 13 Oscars or Won 1 Oscar`.
+- Answer:
+```javascript
+db.movies.aggregate([
+	{
+		$match: {
+			awards: {
+				$exists: true,
+				$ne: null,
+				$regex: /Won \d{1,2} Oscars?/
+			}
+		}
+	},
+	{
+		$group: {
+			_id: null,
+			highest_rating: {
+				$max: "$imdb.rating"
+			},
+			lowest_rating: {
+				$min: "$imdb.rating"
+			},
+			average_rating: {
+				$avg: "$imdb.rating"
+			},
+			deviation: {
+				$stdDevSamp: "$imdb.rating"
+			}
+		}
+	}
+]);
+```
