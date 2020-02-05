@@ -1549,3 +1549,191 @@ db.movies.aggregate([
 	}
 ]);
 ```
+
+#### The &unwind stage
+
+- Unwind an array field, creating a new document for every entry where the field value is now each entry.
+- Arrays are generally matches on pure equality, not equivalence.
+- Short form: `$unwind: [field path]`.
+- Long form:
+```JavaScript
+$unwind: {
+	path: [field path],
+	includeArrayIndex: [string],
+	preserveNullandEmptyArrays: [boolean]
+}
+```
+- Let's sort through the movie genres and return the top-rated genre per year:
+```JavaScript
+db.movies.aggregate([
+	{ // find all the movies we are looking for
+		$match: {
+			"imdb.rating": {
+				$gte: 0
+			},
+			year: {
+				$gte: 2010, $lte: 2015
+			},
+			runtime: {
+				$gte: 90
+			}
+		}
+	},
+	{ // unwind the genres as their own document
+		$unwind: "$genres"
+	},
+	{ // group the new documents
+		$group: {
+			_id: {
+				year: "$year",
+				genre: "$genres"
+			},
+			average_rating: {
+				$avg: "$imdb.rating"
+			}
+		}
+	},
+	{ // sort the documents from year and average_rating descending order
+		$sort: {
+			"_id.year": -1,
+			average_rating: -1
+		}
+	},
+	{ // now just take the first value of each year, since this will be the highest rating
+		$group: {
+			_id: "$_id.year",
+			genre: {
+				$first: "$_id.genre"
+			},
+			average_rating: {
+				$first: "$average_rating"
+			}
+		}
+	},
+	{ // Sort by descending order
+		$sort: {
+			_id: -1
+		}
+	}
+]);
+```
+- If the documents are long and need to use `$unwind`, this may lead to performance issues.
+
+#### Lab - $unwind
+
+- What is the name, number of movies, and average rating (truncated to one decimal) for the cast member that has been in the most number of movies with English as an available language?
+- Answer:
+```javascript
+db.movies.aggregate([
+	{
+		$match: {
+			"cast": {
+				$exists: true,
+				$ne: null,
+				$not: {
+					$size: 0
+				}
+			},
+			"languages": {
+				$in: ["English"]
+			},
+			"imdb.rating": {
+				$exists: true,
+				$ne: null
+			}
+		}
+	},
+	{
+		$unwind: "$cast"
+	},
+	{
+		$group: {
+			"_id": "$cast",
+			"numFilms": {
+				$sum: 1
+			},
+			"average": {
+				$avg: "$imdb.rating"
+			}
+		}
+	},
+	{
+		$project: {
+			"_id": 1,
+			"numFilms": 1,
+			"average": {
+				$divide: [{ $trunc: { $multiply: ["$average", 10] } }, 10]
+			}
+		}
+	},
+	{
+		$sort: {
+			"numFilms": -1,
+			"average": -1
+		}
+	},
+	{
+		$limit: 1
+	}
+]);
+```
+
+#### The $lookup stage
+
+- Combine information from two collections.
+- It's basically a "Left Outer Join".
+- The `from` field cannot be from a sharded instance, it also has to be from the same database.
+- Syntax:
+```javascript
+$lookup: {
+	from: , // collection to join
+	localField: , // field from the input documents
+	foreignField: , // field from the documents of the "from" collection
+	as: // output array field
+}
+```
+- If there are no matches, it will return an empty array.
+- Specifying an existing field name to `as` will overwrite the the existing field.
+- `$lookup` matches between `localField` and `foreignField` with an equality match.
+
+#### Lab - Using $group
+
+- Which alliance from `air_alliances` flies the most `routes` with either a Boeing 747 or an Airbus A380 (abbreviated 747 and 380 in `air_routes`)?
+- Answer:
+```javascript
+db.air_routes.aggregate([
+	{
+		$match: {
+			airplane: /747|380/
+		}
+	},
+	{
+		$lookup: {
+			from: "air_alliances",
+			foreignField: "airlines",
+			localField: "airline.name",
+			as: "alliance"
+		}
+	},
+	{
+		$unwind: "$alliance"
+	},
+	{
+		$group: {
+			_id: "$alliance.name",
+			count: {
+				$sum: 1
+			}
+		}
+	},
+	{
+		$sort: {
+			count: -1
+		}
+	}
+]);
+```
+
+#### $graphLookup introduction
+
+- 
