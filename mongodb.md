@@ -2186,3 +2186,50 @@ db.createView("bronze_banking", "customers", [
 ### Chapter 6: Aggregation performance and pipeline optimization
 
 #### Aggregation performance
+
+- Index usage.
+- Memory constraints.
+- "Realtime" processing:
+	- You can never have truly realtime processing,.
+	- Provide data for applications.
+	- Query performance is more important.
+- Batch processing:
+	- Provide data for analytics.
+	- Query performance is less important.
+- Aggregation queries should use indexes as much as possible, to be more efficient.
+- Append `{explain: true}` to the end of the aggregation pipeline to get more information on your query results.
+- `$match` can use indexes, especially if it uses indexes.
+- `$sort` should be placed early in the pipeline.
+- If you use `$limit` and `$sort` together, they should be early on in the pipeline. `$match` then `$limit` then `$sort` is one of the most efficient aggregation pipelines used without an index.
+- Results are subject to 16MB document limit. This is just the for the final returned data, the data flowing through the pipeline can be greater than 16MB.
+- Use `$limit` and `$project` to keep document returned size low.
+- You are limited to 100MB of RAM per stage, so use indexes.
+- You can extend the RAM limit by appending `{allowDiskUse: true}` to spill usage into the disk. This should be used as a last resort only.
+- `{allowDiskUse: true}` does not work with `$graphLookup`.
+- When `$limit` and `$sort` are close together a very performant top-k sort can be performed.
+- Transforming data in a pipeline stage prevents us from using indexes in the stages that follow.
+
+#### Aggregation pipeline on a sharded cluster
+
+- `sh.shardCollection('m201.restaurants', {"address.state": 1})`.
+- Use the `$match` aggregation pipeline on the `address.state` to directly query a single shard.
+- `$$out` and `$lookup` (but not `$group`) operators will cause a merge stage on the primary shard for a database.
+
+#### Pipeline optimization - Part 1
+
+- You can use a regex on `$match` without specifying regex: `{$match: {title: /^[aeiou]/i}}`.
+- If the pipeline explanation shows a fetch, that means that the query had to dive into a document to get more information. Rather than skimming it because of a useful index.
+- Avoid needless projects.
+
+
+#### Pipeline optimization - Part 2
+
+- One to end pattern, such as the attribute or subset pattern.
+
+- Avoid unnecessary stages, the aggregation framework can project fields automatically if final shape of the output document can be determined from initial input.
+- Use accumulator expressions, `$map`, `$filter`, `$reduce` in a project before an `$unwind`, if possible.
+- Every high order array function can be implemented with `$reduce` if the provided expressions do not meet your needs.
+- Causing a merge in a sharded deployment will cause all subsequent pipeline stages to be performed in the same location as the merge.
+- The query in a `$match` stage can be entirely covered by an index.
+- The Aggregation Framework can automatically project fields if the shape of the final document is only dependent upon those fields in the input document.
+- The Aggregation Framework will automatically reorder stages in certain conditions.
