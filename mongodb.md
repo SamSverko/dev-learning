@@ -2233,3 +2233,74 @@ db.createView("bronze_banking", "customers", [
 - The query in a `$match` stage can be entirely covered by an index.
 - The Aggregation Framework can automatically project fields if the shape of the final document is only dependent upon those fields in the input document.
 - The Aggregation Framework will automatically reorder stages in certain conditions.
+
+---
+
+## M220JS: MongoDB for Developers
+
+### Chapter 0: Introduction and setup
+
+#### Welcome to M220JS
+
+- MongoDB driver for Node.js.
+- We are placed in a backend role.
+- Create and share database connections.
+- Write data with different levels of durability.
+- Handle errors from the driver.
+
+#### Mflix application architecture
+
+- Express is a JavaScript framework.
+
+---
+
+### Chapter 1: Driver setup
+
+#### Introduction to chapter 1
+
+- Basic read operations.
+- Adding field projections.
+- Handling different query predicates.
+
+#### Overview
+
+- MongoDB Atlas, MongoDB's official Database as a Service (DBaaS).
+- Don't touch the frontend, we only need to work on the backend.
+- [Using Node.js and MongoDB together](http://mongodb.github.io/node-mongodb-native/3.2/api/index.html).
+
+#### README: Setting up MongoDB and Atlas
+
+- username: `m220student`.
+- password: `m220password`.
+- Connection string for Node.js project: `mongodb+srv://m220student:m220password@mflix-ugob5.mongodb.net/test?retryWrites=true&w=majority`.
+- Connection string for command line: `mongo "mongodb+srv://mflix
+-ugob5.mongodb.net/test" --username m220student`.
+
+#### README: Setting up mflix
+
+- The API will make calls to Data Access Objects (DAOs) that interact directly with MongoDB.
+
+#### MongoClient
+
+- We can use a `MongoClient` object to:
+	- Instantiate a connection to the database.
+	- Gather information about a database or collection.
+	- Create direct connections to collections, which we can issue queries against.
+
+#### Asynchronous programming in Node.js
+
+- Callbacks are a way of passing a bundle of information to a different part of our program. Functions that some other portion of our code can run.
+- Promises are do this thing, and when it's done, do one of two things: resolve or reject. Promises allow us to be more declarative.
+- Async and await needs to be marked as async. The catch part is handled by a catch. Always block an async/await method with a try and catch block.
+- If you don't pass a callback, a Promise will be returned by default.
+
+#### Basic reads
+
+- The R in CRUD.
+- MongoDB treats arrays as first-class objects.
+- To access the documents, you need to iterate the cursor with the `.next()` method, or use the `toArray()` method.
+- Finding one document typically involves querying on a unique index, such as the `_id` field.
+- Field projection is specified as a JSON object.
+- We must explicitly remove the `_id` field in a projection if we do not want to include this field.
+
+####
