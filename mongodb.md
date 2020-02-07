@@ -2303,4 +2303,10 @@ db.createView("bronze_banking", "customers", [
 - Field projection is specified as a JSON object.
 - We must explicitly remove the `_id` field in a projection if we do not want to include this field.
 
-####
+---
+
+### Chapter 2: User-facing backend
+
+#### Introduction to chapter 2
+
+- Create lots of content for the mflix site.
