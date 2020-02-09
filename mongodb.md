@@ -2310,3 +2310,4 @@ db.createView("bronze_banking", "customers", [
 #### Introduction to chapter 2
 
 - Create lots of content for the mflix site.
+- Write queries to create users, and perform all actions of the CRUD operations: `CREATE`, `READ`, `UPDATE`, `DELETE`.
