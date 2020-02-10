@@ -2409,3 +2409,12 @@ $lookup {
 ```
 - Expressive lookup allows us to apply aggregation pipelines to data before the data is joined.
 - `let` allows us to declare variables in our pipeline, referring to document fields in our source collection.
+
+#### Basic deletes
+
+- We have two delete options `deleteOne` and `deleteMany`.
+- A delete query is technically a write operation.
+- Collection data will be changed.
+- Indexes will be updated.
+- Entries in the `oplog` will be added.
+- Natural order means the order in which documents were inserted.
