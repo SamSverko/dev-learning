@@ -2312,3 +2312,100 @@ db.createView("bronze_banking", "customers", [
 - Create lots of content for the mflix site.
 - Write queries to create users, and perform all actions of the CRUD operations: `CREATE`, `READ`, `UPDATE`, `DELETE`.
 - It's good practice to bundle all database queries into a separate file or object method.
+
+#### Cursor methods and aggregation equivalents
+
+- Append `.limit(2)` to the end of a query to limit the results.
+- Append `{ $limit: 2 }` to the end of a pipeline aggregation to limit results.
+- You can also append `.skip(5)` (query) or `{ $skip: 2 }` (pipeline) to skip results.
+
+#### Basic aggregation
+
+- Aggregation is a pipeline composed of one or more stages.
+- Pipelines are composed of stages, broad units of work.
+- Within stages, expressions are used to specify individual units of work.
+- Expressions are functions.
+- Add function (Node.js):
+```javascript
+function add(a, b) {
+	return a + b;
+}
+```
+- Aggregation: `{ "$add": ["$a", "$b"]}`. Dollar signs are how we refer to variables.
+- MongoDB Compass has this awesome aggregation pipeline builder that updates with the results in real time.
+
+#### Ticket: Faceted search
+
+- Faceted search is a way of narrowing down search results as search parameters are added.
+- For faceted searches, the application must use the Aggregation Framework.
+
+#### Basic writes
+
+- This addresses the C and U of the CRUD operations.
+- `insertOne` inserts one document into the database.
+- `n` is the total number of documents that were inserted.
+- `insertMany` inserts many documents into the database.
+- `upserts` are useful, especially when we can make a write operation generic enough that updating or inserting should give the same result to our application.
+
+#### Write concerns
+
+-  `writeConcern: {w: 1}`.
+	- `w` is the number of nodes acknowledge the write has been applied to the node.
+	- Only requests an acknowledgment that **one** node applied the write.
+	- This is the default `writeConcern` in MongoDB.
+- `w: majority` - Acknowledgment from the driver will only be received when the majority of nodes have done the write. This tasks takes a little longer that `w1`, however it ensures vital writes are majority-committed.
+- `w: 0` - Does not request an acknowledgement that any nodes applied the write.
+	- "Fire-and-forget".
+	- Fastest `writeConcern`, yet least durable.
+	- This could be useful for having an IoT device pinging a MongoDB database every minute indicating it's status that it is still online, but the data it pings is not vital information.
+
+#### Basic updates
+
+- `updateOne` and `updateMany`.
+- Update performs a read to find the document to then update.
+- The query predicate we use to find the document to change for `updateOne` should return one document.
+- `$set` to update the string.
+- `$inc` to increment (or decrement) a value.
+- Upserting is when we want to update a document if it may or may not exist. If it exists, update it. If it does not exist, insert it.
+- Aggregation pipelines cannot be passed to `updateOne()` or `updateMany()`. To update data with an aggregation pipeline, use the `$out` aggregation stage.
+
+#### Basic joins
+
+- Join two collections of data
+- Use new expressive `$lookup`.
+- Build aggregation in MongoDB Compass, then export to language.
+- `$$var` Double dollar sign variables were defined in `let` statements (see below).
+```javascript
+// syntax
+$lookup {
+	from: 'comments', // the other collection you want to get documents from
+	let: {'id': '$_id'}, // we will have access to documents in the comments collection (as specified in 'from' field), but to allow access to the documents in movies collection, we specify that here in the 'let' field. This example is giving us access to movies collection $_id's as id's.
+	pipeline: [
+		{
+			'$match': {
+				'$expr': {
+					'$eq': [`$movie_id`, '$$id'] // the two dollar signs refers to data from the movies collection, because one dollar sign variables refers to data in the comments collection
+				}
+			}
+		}
+	],
+	as: 'movie_comments'
+}
+// example
+{
+	from: 'comments',
+	let: {'id': '$_id'},
+ 	pipeline: [
+    	{
+      		$match: {
+        		'$expr': {
+          			'$eq': ['$movie_id', '$$id']
+        		}
+      		}
+    	}
+  	],
+  as: 'movie_comments'
+}
+```
+- Expressive lookup allows us to apply aggregation pipelines to data before the data is joined.
+- `let` allows us to declare variables in our pipeline, referring to document fields in our source collection.
