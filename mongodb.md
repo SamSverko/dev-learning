@@ -2418,3 +2418,72 @@ $lookup {
 - Indexes will be updated.
 - Entries in the `oplog` will be added.
 - Natural order means the order in which documents were inserted.
+- When using `deleteOne` make sure your predicate matches only one document.
+
+---
+
+### Chapter 3: Admin backend
+
+#### Introduction to chapter 3
+
+- Read concerns
+- Join collections using expressive `$lookup`.
+- Perform bulk operations.
+- Clean data.
+
+#### Read concerns
+
+- Represent different levels of "read isolation".
+- Can be used to specify a consistent view of the database.
+- Default read concern is `local` meaning it reads only from the primary node.
+- Read concern of `majority` it can claim that the data returned has been replicated to a majority of nodes in the replica set. However it might return slightly stale data.
+- `nearest` is a read preference, not a read concern.
+
+#### Bulk writes
+
+- This is a series of writes at once.
+- `bulkWrite([{}, {}, {}])`. Bulk all data into an array of documents for the Mongo driver to update one after another. That way you only send one request to the database, limiting the latency of the entire operation.
+- Will end execution after first write failure.
+- Append `{ordered: false}` when you don't need the queries to be executed in order. This executes the writes in parallel.
+
+---
+
+### Chapter 4: Resiliency
+
+#### Introduction to chapter 4
+
+- Application resilience and robustness.
+
+#### Connection pooling
+
+- Reusing database connections.
+- Establishing a connection, it takes time and resources.
+- Pooling reduces the overhead of creating database connections.
+- By default, the Mongo driver will create 100 connections to share.
+- Using pooling, subsequent requests appear faster to the client.
+- The connection pool will not persist after the client is terminated.
+- Connection pools are specific to a database client, and the number of connections in the pool is declared when the client is initialized.
+
+#### Robust client configuration
+
+- Always specify a `wtimeout` with majority of writes.
+- `wtimeout` of `majority` waits for responses from majority of replica set nodes.
+- For a `w: majority` should always have a `wtimeout`. Example: `{w: 'majority', wtimeout: 5000}`.
+- **Always** handle the `serverSelectionTimeout` errors. You passively monitor the health of all servers.
+- `wtimeout` is only relevant when using a Write Concern more durable than `w: 1`. `wtimeout` does not affect the size of the connection pool, the durability of the Read Concern, or the execution of a bulk write.
+
+#### Error handling
+
+- Distributed system often prone to network issues.
+- Concurrent systems often encounter duplicate key errors.
+- Duplicate key errors, handle if there is a duplicate key.
+	- Create a new `_id` and retry the write.
+- Timeout error, use the try/catch block to execute queries that time out. This is dependent on the durability and speed requirements of the query itself.
+	- Lower the write concern value, or increase the `wtimeoutMS`.
+- Write concern error, when we request a concern that cannot be fulfilled by the cluster.
+	- Lower the write concern value.
+
+#### Principle of least privilege
+
+- Every program and every privileged user of the system should operate using the least amount of privilege necessary to complete the job.
+- Consider what kinds of users and what permissions they will have.

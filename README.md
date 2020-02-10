@@ -67,9 +67,10 @@ Completed Courses:
 
 Completed Courses:
 
-* [M001: MongoDB Basics](https://university.mongodb.com/mercury/M001/2019_December_17/overview) (January 2020)
+* [M220JS: MongoDB for JavaScript Developers](https://university.mongodb.com/mercury/M220JS/2020_February_4/overview) (February 2020)
 * [M103: Basic Cluster Administration](https://university.mongodb.com/mercury/M103/2020_January_7/overview) (January 2020)
 * [M121: The MongoDB Aggregation Framework](https://university.mongodb.com/mercury/M121/2020_January_21/overview) (February 2020)
+* [M001: MongoDB Basics](https://university.mongodb.com/mercury/M001/2019_December_17/overview) (January 2020)
 
 ---
 
