@@ -20,3 +20,26 @@ const books = this.props.books
 // becomes
 const { books } = this.props
 ```
+
+Setting state is asynchronous, so you can do this:
+```javascript
+this.setState(prevState => ({
+  open: !prevState.open
+}))
+```
+
+It's a good convention to keep state in the root of the tree. Sometimes this is called "the source of truth".
+
+For function components, if you are only returning one thing, you can omit the curly braces: `const Hiring = () => <div>Hello</div>`.
+
+The React lifecycle:
+- Constructor - Called before the component is mounted. Good for setting state and binding methods.
+- componentDidMount - Added to the DOM.
+- ComponentWillUnmount - Removed from the DOM. Good for cleaning things up like timers.
+
+You cannot use lifecycle methods in function components, only the render.
+The only required component lifecycle method is render.
+
+Always a good idea to supply default fallback values should props error out and not pass through.
+
+When using JSX in any file, be sure to `import React from 'react'` at the top.

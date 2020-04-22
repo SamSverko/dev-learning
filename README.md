@@ -1,10 +1,10 @@
 # dev-learning
 
-A list of online learning resources that I have completed along my journey of becoming a web developer.
+A list of online learning resources that Sam has completed along his journey of becoming a web developer.
 
 ---
 
-## [Codecademy](https://www.codecademy.com/) ([Profile](https://www.codecademy.com/SamLegros))  
+## [Codecademy](https://www.codecademy.com/)
 
 Completed Courses:
 
@@ -16,7 +16,7 @@ Completed Courses:
 
 ---
 
-## [freeCodeCamp](http://freecodecamp.org/) ([Profile](https://www.freecodecamp.org/samlegros))
+## [freeCodeCamp](http://freecodecamp.org/)
 
 Completed Curriculum:
 
@@ -40,7 +40,7 @@ Completed Certifications:
 
 ---
 
-## [Laracasts](https://laracasts.com/) ([Profile](https://laracasts.com/@SamLegros))
+## [Laracasts](https://laracasts.com/)
 Completed Courses:
 
 * [What's New in PHP 7.1](https://laracasts.com/series/whats-new-in-php-7-1) (August 2018)
@@ -51,9 +51,15 @@ Completed Courses:
 
 ---
 
+## [LinkedIn Learning](https://www.linkedin.com/learning/)
+
+* [React.js Essential Training](https://www.linkedin.com/learning/react-js-essential-training-3) (April 2020)
+
+---
+
 ## [Lynda](https://www.lynda.com/)
 
-* [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer)
+* [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer) (April 2019)
   * **Completed Chapters:** React.js Essential Training, Node.js Essential Training, Learning npm the Node Package Manager, Building a Website with Node.js and Express.js, Learning MongoDB, Express Essential Training, and Building RESTful Web APIs with Node.js and Express.
 
 Completed Courses:
