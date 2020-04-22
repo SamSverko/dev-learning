@@ -53,6 +53,13 @@ Completed Courses:
 
 ## [LinkedIn Learning](https://www.linkedin.com/learning/)
 
+In Progress:
+
+* [Building Modern Projects with React](https://www.linkedin.com/learning/building-modern-projects-with-react/)
+
+Completed Courses:
+
+* [https://www.linkedin.com/learning/learning-react-js-4](https://www.linkedin.com/learning/learning-react-js-4/) (April 2020)
 * [React.js Essential Training](https://www.linkedin.com/learning/react-js-essential-training-3) (April 2020)
 
 ---

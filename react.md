@@ -1,4 +1,4 @@
-# react
+# [react](https://reactjs.org/)
 
 ## React.js Essential Training
 
@@ -43,3 +43,36 @@ The only required component lifecycle method is render.
 Always a good idea to supply default fallback values should props error out and not pass through.
 
 When using JSX in any file, be sure to `import React from 'react'` at the top.
+
+---
+
+## Learning React.js
+
+React is a JavaScript used for creating user interfaces.
+
+Part of the functional paradigm.
+
+For function components, you can write them multiple ways:
+```javascript
+const Hello = () => <p>Hello there</p>
+// or
+const Hello = () => {
+  return (
+    <p>Hello there</p>
+  )
+}
+```
+
+You don't need to set state in constructor:
+```javascript
+class MyClass extends React.Component {
+  state = {
+    myValue: true
+  }
+}
+```
+
+---
+
+## Building Modern Projects with React
+
