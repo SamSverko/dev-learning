@@ -76,3 +76,79 @@ class MyClass extends React.Component {
 
 ## Building Modern Projects with React
 
+### Why use the React ecosystem?
+
+The problem with basic React
+- Effective way to create modular and performant user interfaces.
+- Powerful View portion of the MVC organization.
+- It's lacking the Model and Controller.
+- React is purposefully designed to allow developers to make their own data mangement decisions.
+- Most React developers don't put much thought into these decisions.
+- The outcome is huge components, for loading and managing their own data.
+
+The name of the game is separation of concerns.
+
+### Meet the React ecosystem
+
+- Redux - Manage and mofidy the state of the components using the Flux architecture.
+- Redux Thunk - Separate out the side effects of the application.
+- Reselect - Abstract the details of how our data is managed in the state.
+- Styled Components - Abstract away the state's structure.
+
+### Creating Your Basic Project
+
+What do we need?
+- index.html
+- Support for ES6
+- webpack
+- Root component
+- react-hot-loader
+
+### Why Do We Need Redux?
+
+We need to answer: What's the best way to manage state in our application?
+
+These are a few bad ways to manage your state:
+
+A single root state
+- If you use a single root state and pass them down to all the children, that's referred to as "props drilling", which is not good or scalable.
+
+Components manage their own state
+- What if a lower child state needs to be updated with another component? You would need to do a lot of hoisting.
+
+Global state management
+- A single centralized state where all components share that single state.
+- It sounds great in theory, but it can be a nightmare.
+- An unrestricted global state is not something you want.
+
+### How Does Redux Work?
+
+We have one central source to manage the state.
+
+The Redux store is the single source of truth for the state.
+- Such as if the user is logged in, the list of products, etc.
+
+An unrestricted global state can make bad changes to the global state. We then must assume all components must be properly written.
+
+- Redux store - Stores the state globally.
+- Redux actions - Objects consisting of an action type and payload. Explicitely define the different actions that can occur in the application.
+- Redux reducers - Specifying what should happen to the store when a certain action occurs.
+
+Components can only interact with the state by triggering Redux actions, which use the Redux reducer to change the Redux store. It is a unidirectional data flow:
+- UI triggers actions > state is updated > components see updated state.
+
+When working with reducers, it's important to not mutate the state.
+
+### Redux Best Practices
+
+- Export the connected and unconnected versions of a component.
+- Connected version of that component is used in the entire application. The unconnected component is used for testing.
+- Your tests shouldn't care whether your component is connected or not.
+- Keep Redux actions and async operations out of your reducers.
+- Think carefully about connecting components to the Redux store.
+- Connecting a component can, in practice, make it less reusable.
+
+### Redux Flow
+
+- Start with `actions.js` to create the new action.
+- 
