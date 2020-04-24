@@ -151,4 +151,25 @@ When working with reducers, it's important to not mutate the state.
 ### Redux Flow
 
 - Start with `actions.js` to create the new action.
-- 
+- Then build the `reducers.js` switch case.
+- Then add it to your connected component (within the dispatch).
+- Then add it to the component item.
+
+### Dealing with Side Effects
+
+Without Redux, you get huge components. Redux allows you to keep lean components.
+
+Components still have to contain all the logic for async operations, also known as "side-effects".
+- Redux = state management.
+- Components = view logic.
+- side effect libraries (Redux Thunk, Redux Saga) = side effects.
+
+### How Does Redux Thunk Work?
+
+- Add a logic fork into flow of operations.
+- Components can dispatch a thunk async operation, which will then perform the action/reducer flow into the Redux store.
+
+We should focus the components on their core purpose: taking data and rendering it. Not loading external data or fetching data.
+
+To use Thunk, instead of dispatching an object to the Redux store, we dispatch an async function into the flow.
+
