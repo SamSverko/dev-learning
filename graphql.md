@@ -221,3 +221,6 @@ friends(first: Int, user: User!): [User!]!
 - Declarative methodology (GraphQL):
   - Describe data requirements.
   - Display information in the UI.
+
+- Every GraphQL schema has three special root types, these are called `Query`, `Mutation` and `Subscription`.
+- The fields on these root types are called root field and define the available API operations.
