@@ -6,8 +6,6 @@ A list of online learning resources that Sam has completed along his journey of 
 
 ## [Codecademy](https://www.codecademy.com/)
 
-Completed Courses:
-
 * [Welcome to Codecademy!](https://www.codecademy.com/learn/welcome-to-codecademy) (June 2018)
 * [PHP](https://www.codecademy.com/en/tracks/php) (July 2017)
 * [SQL: Analyzing Business Metrics](https://www.codecademy.com/learn/sql-analyzing-business-metrics) (June 2017)
@@ -17,8 +15,6 @@ Completed Courses:
 ---
 
 ## [freeCodeCamp](http://freecodecamp.org/)
-
-Completed Curriculum:
 
 * [Debugging](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/debugging) (November 2018)
 * [Regular Expressions](https://learn.freecodecamp.org/javascript-algorithms-and-data-structures/regular-expressions) (November 2018)
@@ -41,7 +37,6 @@ Completed Certifications:
 ---
 
 ## [Laracasts](https://laracasts.com/)
-Completed Courses:
 
 * [What's New in PHP 7.1](https://laracasts.com/series/whats-new-in-php-7-1) (August 2018)
 * [Sublime Text Mastery](https://laracasts.com/series/sublime-text-mastery) (August 2018)
@@ -53,12 +48,7 @@ Completed Courses:
 
 ## [LinkedIn Learning](https://www.linkedin.com/learning/)
 
-In Progress:
-
-* [Building Modern Projects with React](https://www.linkedin.com/learning/building-modern-projects-with-react/)
-
-Completed Courses:
-
+* [Building Modern Projects with React](https://www.linkedin.com/learning/building-modern-projects-with-react/) (May 2020)
 * [https://www.linkedin.com/learning/learning-react-js-4](https://www.linkedin.com/learning/learning-react-js-4/) (April 2020)
 * [React.js Essential Training](https://www.linkedin.com/learning/react-js-essential-training-3) (April 2020)
 
@@ -66,19 +56,13 @@ Completed Courses:
 
 ## [Lynda](https://www.lynda.com/)
 
-* [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer) (April 2019)
-  * **Completed Chapters:** React.js Essential Training, Node.js Essential Training, Learning npm the Node Package Manager, Building a Website with Node.js and Express.js, Learning MongoDB, Express Essential Training, and Building RESTful Web APIs with Node.js and Express.
-
-Completed Courses:
-
 * [Programming Foundations: Databases](https://www.lynda.com/SQL-tutorials/Programming-Foundations-Databases/784293-2.html) (June 2019)
 * [Learning Docker](https://www.lynda.com/Docker-tutorials/Learning-Docker/721901-2.html) (June 2019)
+* [Become a MERN Stack JavaScript Developer](https://www.lynda.com/learning-paths/Web/become-a-mern-stack-javascript-developer) (April 2019)
 
 ---
 
 ## [MongoDB University](https://university.mongodb.com/)
-
-Completed Courses:
 
 * [M220JS: MongoDB for JavaScript Developers](https://university.mongodb.com/mercury/M220JS/2020_February_4/overview) (February 2020)
 * [M103: Basic Cluster Administration](https://university.mongodb.com/mercury/M103/2020_January_7/overview) (January 2020)
@@ -89,15 +73,11 @@ Completed Courses:
 
 ## [Udemy](https://www.udemy.com)  
 
-Completed Courses:
-
 * [Three.js & WebGL 3D Programming Crash Course (VR, OpenGL)](https://www.udemy.com/threejs-programming/) (January 2019)
 
 ---
 
 ## [w3schools](https://www.w3schools.com/)
-
-Completed Tutorials:
 
 * [PHP MySQL Database](https://www.w3schools.com/php/php_mysql_intro.asp) (August 2017)
 * [PHP 5 Advanced](https://www.w3schools.com/php/php_arrays_multi.asp) (August 2017)
