@@ -224,3 +224,123 @@ friends(first: Int, user: User!): [User!]!
 
 - Every GraphQL schema has three special root types, these are called `Query`, `Mutation` and `Subscription`.
 - The fields on these root types are called root field and define the available API operations.
+- In general, when adding a new feature to the API, the process will look pretty similar every time:
+  - Extend the GraphQL schema definition with a new root field (and new data types, if needed).
+  - Implement corresponding resolver functions for the added fields.
+- Filtering
+```
+// schema
+type Query {
+  info: String!
+  feed(filter: String): [Link!]!
+}
+
+// resolver
+async function feed(parent, args, context, info) {
+  const where = args.filter ? {
+    OR: [
+      { description_contains: args.filter },
+      { url_contains: args.filter },
+    ],
+  } : {}
+
+  const links = await context.prisma.links({
+    where
+  })
+  return links
+}
+
+// query
+query {
+  feed(filter:"QL") {
+    id
+  	description
+    url
+    postedBy {
+      id
+      name
+    }
+  }
+}
+```
+- Pagination
+```
+// schema
+type Query {
+  info: String!
+  feed(filter: String, skip: Int, first: Int): [Link!]!
+}
+
+// resolver
+async function feed(parent, args, context, info) {
+  const where = args.filter ? {
+    OR: [
+      { description_contains: args.filter },
+      { url_contains: args.filter },
+    ],
+  } : {}
+
+  const links = await context.prisma.links({
+    where,
+    skip: args.skip,
+    first: args.first
+  })
+  return links
+}
+
+// query
+query {
+  feed(
+    first: 1
+    skip: 1
+  ) {
+    id
+    description
+    url
+  }
+}
+```
+- Sorting
+```
+// schema
+enum LinkOrderByInput {
+  description_ASC
+  description_DESC
+  url_ASC
+  url_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type Query {
+  info: String!
+  feed(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): [Link!]!
+}
+
+// resolver
+async function feed(parent, args, context, info) {
+  const where = args.filter ? {
+    OR: [
+      { description_contains: args.filter },
+      { url_contains: args.filter },
+    ],
+  } : {}
+
+  const links = await context.prisma.links({
+    where,
+    skip: args.skip,
+    first: args.first,
+    orderBy: args.orderBy
+  })
+  return links
+}
+
+// query
+query {
+  feed(orderBy: createdAt_ASC) {
+    id
+    description
+    url
+  }
+}
+```
