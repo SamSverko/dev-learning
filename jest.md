@@ -4,6 +4,10 @@
 
 ## [Jest Crash Course - Unit Testing in JavaScript](https://www.youtube.com/watch?v=7r4xVDI2vho)
 
+Once you have Jest installed, you can run tests with `jest`.
+
+You can watch for test changes with `jest --watchAll`.
+
 ### Matchers
 
 #### toBe
