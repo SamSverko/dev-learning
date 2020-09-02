@@ -88,4 +88,5 @@ Completed Certifications:
 
 ## [YouTube](https://www.youtube.com/)
 
+- [Intro to React Testing [Jest and React Testing Library Tutorial]](https://www.youtube.com/watch?v=ZmVBCpefQe8) (September 2020)
 - [Jest Crash Course - Unit Testing in JavaScript](https://www.youtube.com/watch?v=7r4xVDI2vho) (September 2020)

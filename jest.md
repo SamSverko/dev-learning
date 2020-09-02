@@ -274,3 +274,171 @@ describe("Checking names", () => {
   });
 });
 ```
+
+---
+
+## [Intro to React Testing [Jest and React Testing Library Tutorial]](https://www.youtube.com/watch?v=ZmVBCpefQe8)
+
+### Introduction
+
+#### What is a test?
+
+Code you write to verify the behaviour of your application.
+
+#### Why write tests?
+
+Tests are specifications for how our code should work.
+
+#### Consistency
+
+Verify that engineers are following best practices and conventions for your tema.
+
+#### Comfort and confidence
+
+A strong test suite is like a warm blanket.
+
+#### Productivity
+
+We write test because it allows us to ship quality code faster.
+
+#### Types of tests
+
+- **End to end:** Spin up your app and simulate user behaviour. Kind of like a robot performing a task on your app.
+- **Integration:** Verify that multiple units work together.
+- **Unit:** Verify the functionality og a single function/component.
+- **Static:** Catch types and errors while writing code.
+
+#### React component tests
+
+These are considered integration/unit tests.
+
+Basic Jest test:
+
+```js
+const expected = true
+const actual = false
+
+test('it works', () => {
+  expect(actual).toBe(expected)
+})
+```
+
+- `test('it works', () => {})` is the Jest test runner.
+- `expect(actual).toBe(expected)` is the Jest assertion library.
+
+- **Tip:** Execute tests in random order. There might be some improper component clean up, which gives the next test a false positive.
+
+---
+
+### Rendering components for testing
+
+```js
+// the component
+import React from 'react'
+export default function Component() {
+  return <h1>hello</h1>
+}
+
+// the test
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+import TestComponent from '../src/component'
+
+test('renders the correct content', () => {
+  const root = document.createElement('div')
+  ReactDOM.render(<TestComponent />, root)
+  
+  expect(root.querySelector('h1').textContent).toBe('0')
+})
+```
+
+---
+
+### Use DOM Testing Library for Querying the DOM
+
+```js
+// the component
+import React from 'react'
+export default function Component() {
+  return <h1>hello</h1>
+}
+
+// the test
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { getQueriesForElement } from '@testing-library/dom'
+
+import TestComponent from '../src/component'
+
+test('renders the correct content', () => {
+  const root = document.createElement('div')
+  ReactDOM.render(<TestComponent />, root)
+
+  const { getByLabelText, getByText } = getQueriesForElement(root)
+
+  expect(getByText('hello')).not.toBeNull()
+  // you can also omit the expect, because getByText is the assertion
+  // getByText('hello') // this works same as line above
+})
+```
+
+---
+
+## Rendering and Testing with React Testing Library
+
+```js
+// the component
+import React from 'react'
+export default function Component() {
+  return <h1>hello</h1>
+}
+
+// the test
+import React from 'react'
+import { render } from '@testing-library/react'
+
+import TestComponent from '../src/component'
+
+test('renders the correct content', () => {
+  const { getByText } = render(<TestComponent />)
+  
+  expect(getByText('0')).not.toBeNull()
+})
+```
+
+---
+
+### Simulating User Interaction
+
+```js
+// the component
+import React, { useState } from 'react'
+export default function Component() {
+  const [counter, setCounter] = useState(0)
+  return (
+    <>
+      <h1 data-testid='counter'>{counter}</h1>
+      <button data-testid='button-up' onClick={() => setCounter(counter + 1)}>Up</button>
+      <button data-testid='button-down' onClick={() => setCounter(counter - 1)}>Down</button>
+    </>
+  )
+}
+
+// the test
+import React from 'react'
+import { fireEvent, render } from '@testing-library/react'
+
+import TestComponent from '../src/component'
+
+test('allows users to interact with component', () => {
+  const { getByText } = render(<TestComponent />)
+
+  const header = getByText('0')
+  const button = getByText('Up')
+
+  fireEvent.click(button)
+
+  expect(header.textContent).toBe('1')
+})
+```
