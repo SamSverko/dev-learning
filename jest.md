@@ -12,7 +12,7 @@ You can watch for test changes with `jest --watchAll`.
 
 #### toBe
 
-`toBe` is used for primitive types (`numbers`, `strings`, etc.):
+`toBe` tests primitive types (`numbers`, `strings`, etc.) to equal a value:
 
 ```js
 test("Adds 2 + 2 to equal 4", () => {
@@ -23,7 +23,7 @@ test("Adds 2 + 2 to equal 4", () => {
 
 #### not
 
-`.not` tests if something should not be a value:
+`.not` tests if value should not be a certain value:
 
 ```js
 test("Adds 2 + 2 to not equal 5", () => {
@@ -34,7 +34,7 @@ test("Adds 2 + 2 to not equal 5", () => {
 
 #### toBeNull
 
-`toBeNull` matches only `null`:
+`toBeNull` tests if value should equal `null`:
 
 ```js
 test("Should be null", () => {
@@ -45,7 +45,7 @@ test("Should be null", () => {
 
 #### toBeUndefined
 
-`toBeUndefined` matches only `undefined`.
+`toBeUndefined` tests if value should equal `undefined`:
 
 ```js
 test("Should be undefined", () => {
@@ -56,7 +56,7 @@ test("Should be undefined", () => {
 
 #### toBeDefined
 
-`toBeDefined` is the opposite of `toBeUndefined`.
+`toBeDefined` tests if value should equal `toBeUndefined`.
 
 ```js
 test("Should be defined", () => {
@@ -67,29 +67,37 @@ test("Should be defined", () => {
 
 #### toBeTruthy
 
-`toBeTruthy` matches anything that an if statement treats as `true`.
+`toBeTruthy` tests if value should equal `true`.
 
 ```js
-test("Should be truth", () => {
-  const myValue = true;
-  expect(myValue).toBeTruthy();
+test("Should be truthy", () => {
+  const myValueBoolean = true;
+  const myValueString = "hello";
+  const myValueNumber = 1;
+  expect(myValueBoolean).toBeTruthy();
+  expect(myValueString).toBeTruthy();
+  expect(myValueNumber).toBeTruthy();
 });
 ```
 
 #### toBeFalsy
 
-`toBeFalsy` matches anything that an if statement treats as `false`:
+`toBeFalsy` tests if value should equal `false`.
 
 ```js
 test("Should be falsy", () => {
-  const myValue = false;
-  expect(myValue).toBeFalsy();
+  const myValueBoolean = false;
+  const myValueString = null;
+  const myValueNumber = 0;
+  expect(myValueBoolean).toBeFalsy();
+  expect(myValueString).toBeFalsy();
+  expect(myValueNumber).toBeFalsy();
 });
 ```
 
 #### toEqual
 
-`toEqual` is used for objects, functions, etc..
+`toEqual` tests composite data types (`objects`, `functions`, etc.) to equal a value:
 
 ```js
 test("User should be Sam Sverko object", () => {
@@ -116,16 +124,14 @@ test("myFunction function exists", () => {
 `toBeLessThan` or `toBeLessThanOrEqual` tests if value is less than or less than or equal to.
 
 ```js
-test("Should be under 1600", () => {
-  const value1 = 800;
-  const value2 = 700;
-  expect(value1 + value2).toBeLessThan(1600);
+test("Should be less than 1000", () => {
+  const value = 900;
+  expect(value).toBeLessThan(1000);
 });
 
-test("Should be under 1600", () => {
-  const value1 = 800;
-  const value2 = 800;
-  expect(value1 + value2).toBeLessThanOrEqual(1600);
+test("Should be less than or equal to 1000", () => {
+  const value = 1000;
+  expect(value).toBeLessThanOrEqual(1000);
 });
 ```
 
@@ -163,7 +169,7 @@ test("There is no I in team", () => {
 
 ```js
 test("Admin should be in usernames", () => {
-  usernames = ["john", "sam", "admin"];
+  const usernames = ["john", "sam", "admin"];
   expect(usernames).toContain("admin");
 });
 ```
@@ -315,12 +321,12 @@ These are considered integration/unit tests.
 Basic Jest test:
 
 ```js
-const expected = true
-const actual = false
+const expected = true;
+const actual = false;
 
-test('it works', () => {
-  expect(actual).toBe(expected)
-})
+test("it works", () => {
+  expect(actual).toBe(expected);
+});
 ```
 
 - `test('it works', () => {})` is the Jest test runner.
@@ -334,23 +340,23 @@ test('it works', () => {
 
 ```js
 // the component
-import React from 'react'
+import React from "react";
 export default function Component() {
-  return <h1>hello</h1>
+  return <h1>hello</h1>;
 }
 
 // the test
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
 
-import TestComponent from '../src/component'
+import TestComponent from "../src/component";
 
-test('renders the correct content', () => {
-  const root = document.createElement('div')
-  ReactDOM.render(<TestComponent />, root)
-  
-  expect(root.querySelector('h1').textContent).toBe('0')
-})
+test("renders the correct content", () => {
+  const root = document.createElement("div");
+  ReactDOM.render(<TestComponent />, root);
+
+  expect(root.querySelector("h1").textContent).toBe("0");
+});
 ```
 
 ---
@@ -359,28 +365,28 @@ test('renders the correct content', () => {
 
 ```js
 // the component
-import React from 'react'
+import React from "react";
 export default function Component() {
-  return <h1>hello</h1>
+  return <h1>hello</h1>;
 }
 
 // the test
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { getQueriesForElement } from '@testing-library/dom'
+import React from "react";
+import ReactDOM from "react-dom";
+import { getQueriesForElement } from "@testing-library/dom";
 
-import TestComponent from '../src/component'
+import TestComponent from "../src/component";
 
-test('renders the correct content', () => {
-  const root = document.createElement('div')
-  ReactDOM.render(<TestComponent />, root)
+test("renders the correct content", () => {
+  const root = document.createElement("div");
+  ReactDOM.render(<TestComponent />, root);
 
-  const { getByLabelText, getByText } = getQueriesForElement(root)
+  const { getByLabelText, getByText } = getQueriesForElement(root);
 
-  expect(getByText('hello')).not.toBeNull()
+  expect(getByText("hello")).not.toBeNull();
   // you can also omit the expect, because getByText is the assertion
   // getByText('hello') // this works same as line above
-})
+});
 ```
 
 ---
@@ -389,22 +395,22 @@ test('renders the correct content', () => {
 
 ```js
 // the component
-import React from 'react'
+import React from "react";
 export default function Component() {
-  return <h1>hello</h1>
+  return <h1>hello</h1>;
 }
 
 // the test
-import React from 'react'
-import { render } from '@testing-library/react'
+import React from "react";
+import { render } from "@testing-library/react";
 
-import TestComponent from '../src/component'
+import TestComponent from "../src/component";
 
-test('renders the correct content', () => {
-  const { getByText } = render(<TestComponent />)
-  
-  expect(getByText('0')).not.toBeNull()
-})
+test("renders the correct content", () => {
+  const { getByText } = render(<TestComponent />);
+
+  expect(getByText("0")).not.toBeNull();
+});
 ```
 
 ---
@@ -413,32 +419,36 @@ test('renders the correct content', () => {
 
 ```js
 // the component
-import React, { useState } from 'react'
+import React, { useState } from "react";
 export default function Component() {
-  const [counter, setCounter] = useState(0)
+  const [counter, setCounter] = useState(0);
   return (
     <>
-      <h1 data-testid='counter'>{counter}</h1>
-      <button data-testid='button-up' onClick={() => setCounter(counter + 1)}>Up</button>
-      <button data-testid='button-down' onClick={() => setCounter(counter - 1)}>Down</button>
+      <h1 data-testid="counter">{counter}</h1>
+      <button data-testid="button-up" onClick={() => setCounter(counter + 1)}>
+        Up
+      </button>
+      <button data-testid="button-down" onClick={() => setCounter(counter - 1)}>
+        Down
+      </button>
     </>
-  )
+  );
 }
 
 // the test
-import React from 'react'
-import { fireEvent, render } from '@testing-library/react'
+import React from "react";
+import { fireEvent, render } from "@testing-library/react";
 
-import TestComponent from '../src/component'
+import TestComponent from "../src/component";
 
-test('allows users to interact with component', () => {
-  const { getByText } = render(<TestComponent />)
+test("allows users to interact with component", () => {
+  const { getByText } = render(<TestComponent />);
 
-  const header = getByText('0')
-  const button = getByText('Up')
+  const header = getByText("0");
+  const button = getByText("Up");
 
-  fireEvent.click(button)
+  fireEvent.click(button);
 
-  expect(header.textContent).toBe('1')
-})
+  expect(header.textContent).toBe("1");
+});
 ```
