@@ -1123,6 +1123,562 @@ Videos additionally have readonly `videoWidth` and `videoHeight` bindings.
 
 #### onMount
 
+It's recommended to put the `fetch` in `onMount` rather than at the top level of the `<script>` because of server-side rendering (SSR). With the exception of `onDestroy`, lifecycle functions don't run during SSR, which means we can avoid fetching data that should be loaded lazily once the component has been mounted in the DOM.
+
+```html
+<script>
+	import { onMount } from 'svelte';
+
+	let photos = [];
+
+	onMount(async () => {
+		const res = await fetch(`https://jsonplaceholder.typicode.com/photos?_limit=20`);
+		photos = await res.json();
+	});
+</script>
+
+<style>
+	.photos {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		grid-gap: 8px;
+	}
+
+	figure, img {
+		width: 100%;
+		margin: 0;
+	}
+</style>
+
+<h1>Photo album</h1>
+
+<div class="photos">
+	{#each photos as photo}
+		<figure>
+			<img src={photo.thumbnailUrl} alt={photo.title}>
+			<figcaption>{photo.title}</figcaption>
+		</figure>
+	{:else}
+		<!-- this block renders when photos.length === 0 -->
+		<p>loading...</p>
+	{/each}
+</div>
+```
+
+#### onDestroy
+
+To run code when your component is destroyed, use onDestroy.
+
+For example, we can add a `setInterval` function when our component initialises, and clean it up when it's no longer relevant. Doing so prevents memory leaks.
+
+```html
+<!-- app -->
+<script>
+	import { onInterval } from './utils.js';
+
+	let seconds = 0;
+	onInterval(() => seconds += 1, 1000);
+</script>
+
+<p>
+	The page has been open for
+	{seconds} {seconds === 1 ? 'second' : 'seconds'}
+</p>
+
+<!-- utils -->
+import { onDestroy } from 'svelte';
+
+export function onInterval(callback, milliseconds) {
+	const interval = setInterval(callback, milliseconds);
+
+	onDestroy(() => {
+		clearInterval(interval);
+	});
+}
+```
+
+#### beforeUpdate and afterUpdate
+
+The `beforeUpdate` function schedules work to happen immediately before the DOM has been updated. `afterUpdate` is its counterpart, used for running code once the DOM is in sync with your data.
+
+```html
+<script>
+	import Eliza from 'elizabot';
+	import { beforeUpdate, afterUpdate } from 'svelte';
+
+	let div;
+	let autoscroll;
+
+	beforeUpdate(() => {
+		autoscroll = div && (div.offsetHeight + div.scrollTop) > (div.scrollHeight - 20);
+	});
+
+	afterUpdate(() => {
+		if (autoscroll) div.scrollTo(0, div.scrollHeight);
+	});
+
+	const eliza = new Eliza();
+
+	let comments = [
+		{ author: 'eliza', text: eliza.getInitial() }
+	];
+
+	function handleKeydown(event) {
+		if (event.key === 'Enter') {
+			const text = event.target.value;
+			if (!text) return;
+
+			comments = comments.concat({
+				author: 'user',
+				text
+			});
+
+			event.target.value = '';
+
+			const reply = eliza.transform(text);
+
+			setTimeout(() => {
+				comments = comments.concat({
+					author: 'eliza',
+					text: '...',
+					placeholder: true
+				});
+
+				setTimeout(() => {
+					comments = comments.filter(comment => !comment.placeholder).concat({
+						author: 'eliza',
+						text: reply
+					});
+				}, 500 + Math.random() * 500);
+			}, 200 + Math.random() * 200);
+		}
+	}
+</script>
+
+<style>
+	.chat {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		max-width: 320px;
+	}
+
+	.scrollable {
+		flex: 1 1 auto;
+		border-top: 1px solid #eee;
+		margin: 0 0 0.5em 0;
+		overflow-y: auto;
+	}
+
+	article {
+		margin: 0.5em 0;
+	}
+
+	.user {
+		text-align: right;
+	}
+
+	span {
+		padding: 0.5em 1em;
+		display: inline-block;
+	}
+
+	.eliza span {
+		background-color: #eee;
+		border-radius: 1em 1em 1em 0;
+	}
+
+	.user span {
+		background-color: #0074D9;
+		color: white;
+		border-radius: 1em 1em 0 1em;
+		word-break: break-all;
+	}
+</style>
+
+<div class="chat">
+	<h1>Eliza</h1>
+
+	<div class="scrollable" bind:this={div}>
+		{#each comments as comment}
+			<article class={comment.author}>
+				<span>{comment.text}</span>
+			</article>
+		{/each}
+	</div>
+
+	<input on:keydown={handleKeydown}>
+</div>
+```
+
+#### Tick
+
+The `tick` function is unlike other lifecycle functions in that you can call it any time, not just when the component first initialises. It returns a promise that resolves as soon as any pending state changes have been applied to the DOM (or immediately, if there are no pending state changes).
+
+```html
+<script>
+	import { tick } from 'svelte';
+
+	let text = `Select some text and hit the tab key to toggle uppercase`;
+
+	async function handleKeydown(event) {
+		if (event.key !== 'Tab') return;
+
+		event.preventDefault();
+
+		const { selectionStart, selectionEnd, value } = this;
+		const selection = value.slice(selectionStart, selectionEnd);
+
+		const replacement = /[a-z]/.test(selection)
+			? selection.toUpperCase()
+			: selection.toLowerCase();
+
+		text = (
+			value.slice(0, selectionStart) +
+			replacement +
+			value.slice(selectionEnd)
+		);
+
+		await tick();
+		this.selectionStart = selectionStart;
+		this.selectionEnd = selectionEnd;
+	}
+</script>
+
+<style>
+	textarea {
+		width: 100%;
+		height: 200px;
+	}
+</style>
+
+<textarea value={text} on:keydown={handleKeydown}></textarea>
+```
+
+### Stores
+
+#### Writable stores
+
+Not all application state belongs inside your application's component hierarchy. Sometimes, you'll have values that need to be accessed by multiple unrelated components, or by a regular JavaScript module.
+
+In Svelte, we do this with `stores`. A store is simply an object with a `subscribe` method that allows interested parties to be notified whenever the store value changes. In `App.svelte`, `count` is a store, and we're setting `count_value` in the `count.subscribe` callback.
+
+```html
+<!-- app -->
+<script>
+	import { count } from './stores.js';
+	import Incrementer from './Incrementer.svelte';
+	import Decrementer from './Decrementer.svelte';
+	import Resetter from './Resetter.svelte';
+
+	let count_value;
+
+	const unsubscribe = count.subscribe(value => {
+		count_value = value;
+	});
+</script>
+
+<h1>The count is {count_value}</h1>
+
+<Incrementer/>
+<Decrementer/>
+<Resetter/>
+
+<!-- decrementer -->
+<script>
+	import { count } from './stores.js';
+
+	function decrement() {
+		count.update(n => n - 1);
+	}
+</script>
+
+<button on:click={decrement}>
+	-
+</button>
+
+<!-- incrementer -->
+<script>
+	import { count } from './stores.js';
+
+	function increment() {
+		count.update(n => n + 1);
+	}
+</script>
+
+<button on:click={increment}>
+	+
+</button>
+
+<!-- resetter -->
+<script>
+	import { count } from './stores.js';
+
+	function reset() {
+		count.set(0);
+	}
+</script>
+
+<button on:click={reset}>
+	reset
+</button>
+
+<!-- stores -->
+import { writable } from 'svelte/store';
+
+export const count = writable(0);
+```
+
+#### Auto-subscriptions
+
+```html
+<!-- app -->
+<script>
+	import { count } from './stores.js';
+	import Incrementer from './Incrementer.svelte';
+	import Decrementer from './Decrementer.svelte';
+	import Resetter from './Resetter.svelte';
+</script>
+
+<h1>The count is {$count}</h1>
+
+<Incrementer/>
+<Decrementer/>
+<Resetter/>
+
+<!-- decrementer -->
+<script>
+	import { count } from './stores.js';
+
+	function decrement() {
+		count.update(n => n - 1);
+	}
+</script>
+
+<button on:click={decrement}>
+	-
+</button>
+
+<!-- incrementer -->
+<script>
+	import { count } from './stores.js';
+
+	function increment() {
+		count.update(n => n + 1);
+	}
+</script>
+
+<button on:click={increment}>
+	+
+</button>
+
+<!-- resetter -->
+<script>
+	import { count } from './stores.js';
+
+	function reset() {
+		count.set(0);
+	}
+</script>
+
+<button on:click={reset}>
+	reset
+</button>
+
+<!-- stores -->
+import { writable } from 'svelte/store';
+
+export const count = writable(0);
+```
+
+#### Readable stores
+
+```html
+<!-- app -->
+<script>
+	import { time } from './stores.js';
+
+	const formatter = new Intl.DateTimeFormat('en', {
+		hour12: true,
+		hour: 'numeric',
+		minute: '2-digit',
+		second: '2-digit'
+	});
+</script>
+
+<h1>The time is {formatter.format($time)}</h1>
+
+<!-- stores -->
+import { readable } from 'svelte/store';
+
+export const time = readable(new Date(), function start(set) {
+	const interval = setInterval(() => {
+		set(new Date());
+	}, 1000);
+
+	return function stop() {
+		clearInterval(interval);
+	};
+});
+```
+
+#### Derived stores
+
+```html
+<!-- app -->
+<script>
+	import { time, elapsed } from './stores.js';
+
+	const formatter = new Intl.DateTimeFormat('en', {
+		hour12: true,
+		hour: 'numeric',
+		minute: '2-digit',
+		second: '2-digit'
+	});
+</script>
+
+<h1>The time is {formatter.format($time)}</h1>
+
+<p>
+	This page has been open for
+	{$elapsed} {$elapsed === 1 ? 'second' : 'seconds'}
+</p>
+
+<!-- stores -->
+import { readable, derived } from 'svelte/store';
+
+export const time = readable(new Date(), function start(set) {
+	const interval = setInterval(() => {
+		set(new Date());
+	}, 1000);
+
+	return function stop() {
+		clearInterval(interval);
+	};
+});
+
+const start = new Date();
+
+export const elapsed = derived(
+	time,
+	$time => Math.round(($time - start) / 1000)
+);
+```
+
+#### Custom stores
+
+```html
+<!-- app -->
+<script>
+	import { count } from './stores.js';
+</script>
+
+<h1>The count is {$count}</h1>
+
+<button on:click={count.increment}>+</button>
+<button on:click={count.decrement}>-</button>
+<button on:click={count.reset}>reset</button>
+
+<!-- stores -->
+import { writable } from 'svelte/store';
+
+function createCount() {
+	const { subscribe, set, update } = writable(0);
+
+	return {
+		subscribe,
+		increment: () => update(n => n + 1),
+		decrement: () => update(n => n - 1),
+		reset: () => set(0)
+	};
+}
+
+export const count = createCount();
+```
+
+#### Store bindings
+
+If a store is writable — i.e. it has a `set` method — you can bind to its value, just as you can bind to local component state.
+
+```html
+<!-- app -->
+<script>
+	import { name, greeting } from './stores.js';
+</script>
+
+<h1>{$greeting}</h1>
+<input bind:value={$name}>
+
+<button on:click="{() => $name += '!'}">
+	Add exclamation mark!
+</button>
+
+<!-- stores -->
+import { writable, derived } from 'svelte/store';
+
+export const name = writable('world');
+
+export const greeting = derived(
+	name,
+	$name => `Hello ${$name}!`
+);
+```
+
+### Motion
+
+#### Tweened
+
+The full set of options available to `tweened`:
+
+- `delay` — milliseconds before the tween starts
+- `duration` — either the duration of the tween in milliseconds, or a `(from, to) => milliseconds` function allowing you to (e.g.) specify longer tweens for larger changes in value
+- `easing` — a `p => t` function
+- `interpolate` — a custom `(from, to) => t => value` function for interpolating between arbitrary values. By default, Svelte will interpolate between numbers, dates, and identically-shaped arrays and objects (as long as they only contain numbers and dates or other valid arrays and objects). If you want to interpolate (for example) colour strings or transformation matrices, supply a custom interpolator.
+
+```html
+<script>
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+
+	const progress = tweened(0, {
+		duration: 400,
+		easing: cubicOut
+	});
+</script>
+
+<style>
+	progress {
+		display: block;
+		width: 100%;
+	}
+</style>
+
+<progress value={$progress}></progress>
+
+<button on:click="{() => progress.set(0)}">
+	0%
+</button>
+
+<button on:click="{() => progress.set(0.25)}">
+	25%
+</button>
+
+<button on:click="{() => progress.set(0.5)}">
+	50%
+</button>
+
+<button on:click="{() => progress.set(0.75)}">
+	75%
+</button>
+
+<button on:click="{() => progress.set(1)}">
+	100%
+</button>
+```
+
+#### Spring
+
 ```html
 
 ```
