@@ -55,7 +55,7 @@ function greeter(person: Person) {}
 ### Environment Setup
 
 ```typescript
-var num:number = 12 
+var num:number = 12
 console.log(num)
 ```
 Becomes
@@ -119,12 +119,12 @@ console.log(num);
 - Method − Methods facilitate communication between objects.
 - Example:
 ```typescript
-class Greeting { 
-   greet():void { 
-      console.log("Hello World!!!") 
-   } 
-} 
-var obj = new Greeting(); 
+class Greeting {
+   greet():void {
+      console.log("Hello World!!!")
+   }
+}
+var obj = new Greeting();
 obj.greet();
 ```
 
@@ -190,25 +190,25 @@ var str2:number = <number> <any> str // str is now of type number
 
 - Functions may also return value along with control, back to the caller. Such functions are called as returning functions:
 ```typescript
-function function_name():return_type { 
-   //statements 
-   return value; 
+function function_name():return_type {
+   //statements
+   return value;
 }
 
-function greet():string { //the function returns a string 
-   return "Hello World" 
-} 
+function greet():string { //the function returns a string
+   return "Hello World"
+}
 ```
 
 ### Arrays
 
 - To declare an initialize an array in Typescript use the following syntax:
 ```typescript
-var array_name[:datatype];        //declaration 
+var array_name[:datatype];        //declaration
 array_name = [val1,val2,valn..]   //initialization
 
-var alphas:string[]; 
-alphas = ["1","2","3","4"] 
+var alphas:string[];
+alphas = ["1","2","3","4"]
 ```
 
 ### Tuples
@@ -224,50 +224,181 @@ var mytuple = [10, "Hello"];
 - Union types are a powerful way to express a value that can be one of the several types. Two or more data types are combined using the pipe symbol (|) to denote a Union Type.
 ```typescript
 Type1|Type2|Type3
-var val:string|number 
+var val:string|number
 ```
 
 #### Union Type and Arrays
 
 -Union types can also be applied to arrays, properties and interfaces. The following illustrates the use of union type with an array:
 ```typescript
-var arr:number[]|string[]; 
-var i:number; 
-arr = [1,2,4] 
+var arr:number[]|string[];
+var i:number;
+arr = [1,2,4]
 ```
 
 ### Interfaces
 
 - An interface is a syntactical contract that an entity should conform to. In other words, an interface defines the syntax that any entity must adhere to.
 ```typescript
-interface IPerson { 
-  firstName:string, 
-  lastName:string, 
-  sayHi: ()=>string 
-} 
+interface IPerson {
+  firstName:string,
+  lastName:string,
+  sayHi: ()=>string
+}
 
-var customer:IPerson = { 
+var customer:IPerson = {
   firstName:"Tom",
-  lastName:"Hanks", 
-  sayHi: ():string =>{return "Hi there"} 
-} 
+  lastName:"Hanks",
+  sayHi: ():string =>{return "Hi there"}
+}
 ```
 
 #### Union Type and Interface
 
 - The following example shows the use of Union Type and Interface:
 ```typescript
-interface RunOptions { 
-  program:string; 
-  commandline:string[]|string|(()=>string); 
-} 
+interface RunOptions {
+  program:string;
+  commandline:string[]|string|(()=>string);
+}
 ```
 
 #### Interfaces and Arrays
 
 - Interface can define both the kind of key an array uses and the type of entry it contains. Index can be of type string or type number:
 ```typescript
-interface namelist { 
-  [index:number]:string 
+interface namelist {
+  [index:number]:string
 }
 ```
+
+---
+
+## [Understanding TypeScript - 2021 Edition](https://www.udemy.com/course/understanding-typescript/learn/lecture/16949812#overview)
+
+### What is TypeScript (TS)?
+
+- A JavaScript (JS) superset.
+- A language building up on JS.
+- Adds new features and advantages to JS.
+- Browsers can't execute TS.
+- TS compiles to JS.
+- Features are compiled to JS "workarounds", possible errors are thrown.
+
+### Why use TS?
+
+- Unwanted behaviour at runtime in JS, such as using strings of numbers instead of actual numbers.
+
+### Installing and using TS
+
+- Installing TS using NPM: `sudo npm i -g typescript`.
+
+### TS advantages - Overview
+
+- TS adds types.
+- Next-gen JS features (compiled down for older browsers).
+- Non-JS features like Interfaces or Generics.
+- Meta-programming features like Decorators.
+- Rich configuration options.
+- Modern tooling that helps even in non-TS projects.
+
+### Using types
+
+Core types:
+- `number` - All numbers, no differentiation between integers or floats (`1`, `5.3`, `-10`)
+- `string` - All text values ("hello", 'hello', ``hello``)
+- `boolean` - Just `true` and `false`, no "truthy" or "falsy".
+
+TS's type system only helps you during development (i.e. before the code gets compiled).
+
+### TS types versus JS types
+
+- JS is dynamically typed. Meaning you can change the type of the variable at any point of the application. They become resolved at runtime.
+- TS uses static types. Meaning they are set during development.
+
+### Type casing
+
+- The core primitive types in TS are all lowercase: `string`, `number`, etc.
+
+### Working with numbers, string, and booleans
+
+- All numbers are floats by default.
+
+### Type assignment and type inference
+
+- TS has type inference, meaning TS will know what type a constant will have for primitive types.
+- Assigning a type is actually redundant and not a best practice because TS will already know the type and actual value if you use a constant.
+- You tell TS the type when you create the variable in an unassigned way.
+
+## Object types
+
+- TS object types are written with key: type; values.
+- TS can infer object type.
+```ts
+const person: object = {
+  name: 'Sam',
+}
+```
+- Using `const person: object = {}` won't have TS infer any of the properties.
+- The snippet below isn't needed because TS will infer the types and values.
+```ts
+const person: {
+  name: string;
+  age: number;
+} = {
+  name: 'Sam',
+  age: '100'
+}
+```
+- Say you have this JS object:
+```js
+const product = {
+  id: 'abc1',
+  price: 12.99,
+  tags: ['great-offer', 'hot-and-new'],
+  details: {
+    title: 'Red Carpet',
+    description: 'A great carpet - almost brand-new!'
+  }
+}
+```
+- The TS inferred type would be:
+```ts
+{
+  id: string;
+  price: number;
+  tags: string[],
+  details: {
+    title: string;
+    description: string;
+  }
+}
+```
+
+### Array types
+
+- Arrays can be flexible or strict.
+- An array of strings would be `string[]`.
+- To support a mixed array, you can use `any[]`. Not that recommended.
+
+### Tuples
+
+- `[1, 'hello']` = A fixed-length and type array.
+- The type would be: `[number, string]`.
+
+### Working with Enums
+
+- `enum { NEW, OLD }`
+- Automatically enumerated global constant identifiers.
+- Often, you'll see enums with all-uppercase values, but that's not a "must do". You can go with any value naming convention.
+```ts
+enum Role { ADMIN, READ_ONLY, AUTHOR }
+
+const person = {
+  name: 'Sam',
+  age: 100,
+  hobbies: ['Cooking', 'Games'],
+  role: Role.ADMIN
+}
+```
+- You can set your own enum values and types: `enum Role { ADMIN = 5, READ_ONLY = 100, AUTHOR = 'AUTHOR' }`
