@@ -276,7 +276,9 @@ interface namelist {
 
 ## [Understanding TypeScript - 2021 Edition](https://www.udemy.com/course/understanding-typescript/learn/lecture/16949812#overview)
 
-### What is TypeScript (TS)?
+### TypeScript (TS) basics & basic types
+
+#### What is TS?
 
 - A JavaScript (JS) superset.
 - A language building up on JS.
@@ -285,15 +287,15 @@ interface namelist {
 - TS compiles to JS.
 - Features are compiled to JS "workarounds", possible errors are thrown.
 
-### Why use TS?
+#### Why use TS?
 
 - Unwanted behaviour at runtime in JS, such as using strings of numbers instead of actual numbers.
 
-### Installing and using TS
+#### Installing and using TS
 
 - Installing TS using NPM: `sudo npm i -g typescript`.
 
-### TS advantages - Overview
+#### TS advantages - Overview
 
 - TS adds types.
 - Next-gen JS features (compiled down for older browsers).
@@ -302,7 +304,7 @@ interface namelist {
 - Rich configuration options.
 - Modern tooling that helps even in non-TS projects.
 
-### Using types
+#### Using types
 
 Core types:
 - `number` - All numbers, no differentiation between integers or floats (`1`, `5.3`, `-10`)
@@ -311,26 +313,26 @@ Core types:
 
 TS's type system only helps you during development (i.e. before the code gets compiled).
 
-### TS types versus JS types
+#### TS types versus JS types
 
 - JS is dynamically typed. Meaning you can change the type of the variable at any point of the application. They become resolved at runtime.
 - TS uses static types. Meaning they are set during development.
 
-### Type casing
+#### Type casing
 
 - The core primitive types in TS are all lowercase: `string`, `number`, etc.
 
-### Working with numbers, string, and booleans
+#### Working with numbers, string, and booleans
 
 - All numbers are floats by default.
 
-### Type assignment and type inference
+#### Type assignment and type inference
 
 - TS has type inference, meaning TS will know what type a constant will have for primitive types.
 - Assigning a type is actually redundant and not a best practice because TS will already know the type and actual value if you use a constant.
 - You tell TS the type when you create the variable in an unassigned way.
 
-## Object types
+#### Object types
 
 - TS object types are written with key: type; values.
 - TS can infer object type.
@@ -375,18 +377,18 @@ const product = {
 }
 ```
 
-### Array types
+#### Array types
 
 - Arrays can be flexible or strict.
 - An array of strings would be `string[]`.
 - To support a mixed array, you can use `any[]`. Not that recommended.
 
-### Tuples
+#### Tuples
 
 - `[1, 'hello']` = A fixed-length and type array.
 - The type would be: `[number, string]`.
 
-### Working with Enums
+#### Working with enums
 
 - `enum { NEW, OLD }`
 - Automatically enumerated global constant identifiers.
@@ -402,3 +404,91 @@ const person = {
 }
 ```
 - You can set your own enum values and types: `enum Role { ADMIN = 5, READ_ONLY = 100, AUTHOR = 'AUTHOR' }`
+
+
+#### The any type
+
+- You can store any type of value, no specific type assignment
+
+#### Union types
+
+- Accept multiple type assignments:
+```ts
+function combine(input1: number | string, input2: number | string) {
+  let result
+  if (typeof input1 === 'number' && typeof input2 === 'number') {
+    result = input1 + input2;
+  } else {
+    result = input1.toString() + input2.toString()
+  }
+  return result;
+}
+```
+
+#### Literal types
+
+- Exact value of the type: `const number = 2.8`. The literal type would be `2.8`.
+
+#### Type aliases / custom types
+
+- You can define custom type using aliases.
+```ts
+// before
+input1: string | number
+
+// using an alias
+type Combinable = string | number
+```
+
+#### Function return types & void
+
+- TS does infer basic function returns, such as if all inputs are numbers, and it returns a number.
+- If you have no reason for setting the type, don't set it, and let TS infer the type.
+- Use the `void` type when not returning anything from a function (e.g. the function logs the value instead of returning it).
+
+#### Functions as types
+
+- `let combineValues: Function;`
+- `let combineValues: (a: number, b: number) => number;` Should accept any functions that take two parameters that are both numbers and the function returns a number.
+
+#### Function types & callbacks
+
+```ts
+function addAndHandle(n1: number, n2: number, cb: (num: number) => void) {
+  const result = n1 + n2;
+  cb(result)
+}
+
+addAndHandle(10, 20, (result) => {
+  console.log(result);
+})
+```
+- Add void as a function return type, it tells TS to not worry about what you might return.
+
+#### The "unknown" type
+
+- `let userInput: unknown;`
+- Using the `any` type removes all type validations.
+- You need to use a type check in order to assign an unknown type to a known type.
+```ts
+let userInput: unknown;
+let userName: string;
+
+userInput = 5;
+userInput = 'Max';
+
+if (typeof userInput === 'string') {
+  userName = userInput;
+}
+```
+
+#### The 'never' type
+
+- Use `never` if the function will never return anything.
+```ts
+function generateError(message: string, code: number): never {
+  throw { message: message, errorCode: code }
+}
+```
+
+### The TS compiler (and its configuration)
