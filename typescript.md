@@ -542,3 +542,45 @@ function generateError(message: string, code: number): never {
 
 - If `lib` is not set in `tsconfig.js`, it will infer default libraries from the target (i.e. `ES6` that have the `DOM` APIs).
 - If you manually write `lib` values, you must specificy what you want.
+
+#### Working with source maps
+
+- Set the `sourceMap` key to `true` to get map files of the JS so browsers can see the TS source files.
+
+#### rootDir and outDir
+
+- Set the ` "outDir": "./dist"` to set where the compiled JS files will be saved. Your TS folder structure will remain the same in the JS `outDir`.
+- Set the `"rootDir": "./src",` to set where the TS compiler will look.
+
+#### Stop emitting files on compilation errors
+
+- If you don't want any JS files to be compiled from TS, you can set `"noEmitOnError": true`.
+
+#### Strict compilation
+
+- You can either set `"strict": true` to get all strict options, or remove this and un-comment individual strict options as you need.
+- `"noImplicitAny": true,` to disallow any inferring of the `any` type.
+- The ! operator tells TS the value will not yield a null value: `const button = document.querySelector('button')!;`.
+
+#### Code quality options
+
+- `"noUnusedLocals": true` for not allowing unused scoped variables. Global variables will still be allowed.
+- Using `"noImplicitReturns": true` you must explicitly return things, for example:
+```ts
+function add(n1: number, n2: number) {
+  if (n1 + n2 > 0) {
+    return n1 + n1;
+  }
+  return;
+}
+```
+
+#### Debugging with Visual Studio Code
+
+- ESLint
+- Prettier
+- Debugger for Chrome
+
+### Next-generation JS & TS
+
+-
