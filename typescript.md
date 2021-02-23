@@ -492,3 +492,53 @@ function generateError(message: string, code: number): never {
 ```
 
 ### The TS compiler (and its configuration)
+
+#### Using "watch mode"
+
+- Run TS compiler in watch mode: `tsc app.ts -w` or `tsc app.ts --watch`.
+
+#### Compiling the entire project / multiple files
+
+- Initial project as a TS project: `tsc --init`.
+- With a project having a `tsconfig.json`, you can watch the entire project using `tsc --watch`.
+
+#### Including and excluding files
+
+- Using the `tsconfig.json` file:
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": [
+    "*.dev.ts", /* ignore all files that end with .dev.ts */
+    "**/*.dev.ts", /* ignore all files that end with .dev.ts in any folder */
+    "node_modules",
+  ],
+  "include": [
+    "analytics.ts"
+  ],
+  "files": [
+    "app.ts" /* to point only at files, not directories */
+  ]
+}
+```
+- If you do not provide the `exclude` key in the `tsconfig.json`, `node_modules` is excluded automatically.
+- If you do provide the `exlude` key, make sure to include the `node_modules` folder.
+- There is an `include` key, to tell TS to only compile that's in the `include` array.
+- Compilation does include minus exclude. So if you include `app.ts` but also exlude `app.ts`, `app.ts` will not be compiled.
+
+#### Setting a compilation target
+
+- Default target is `ES3`.
+- Using `ctrl + space` on an empty value in the `tsconfig.json` will show a dropdown of the options you can select.
+
+#### Understanding TS core libs
+
+- If `lib` is not set in `tsconfig.js`, it will infer default libraries from the target (i.e. `ES6` that have the `DOM` APIs).
+- If you manually write `lib` values, you must specificy what you want.
