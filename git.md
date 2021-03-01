@@ -2,6 +2,103 @@
 
 ---
 
+## Create repositories
+
+`git init`
+Turn an existing directory into a git repository.
+
+`git clone [url]`
+Clone a repository that already exists on GitHub.
+
+---
+
+## Synchronize changes
+
+`git remote -v`
+Lists the set of repositories ("remotes") whose branches you track.
+
+`git fetch`
+Downloads all history from the remote tracking branches.
+
+`git merge`
+Combines the remote tracking branch into the current local branch
+
+`git push`
+Uploads all local branch commits to GitHub
+
+`git pull`
+Updates your current local working branch with all new commits from the corresponding remote branch on GitHub. git pull is a combination of git fetch and git merge.
+
+---
+
+## Branches
+
+`git status`
+Displays paths that have differences between the index file and the current HEAD commit.
+
+`git branch`
+Lists all branches.
+
+`git branch [branch-name]`
+Creates a new branch.
+
+`git merge [branch]`
+Combines the specified branch’s history into the current branch.
+
+`git branch -d [branch]`
+Deletes the specified branch.
+
+`git fetch --prune`
+Cleans outdated branches. It will connect to a shared remote repository remote and fetch all remote branch refs. It will then delete remote refs that are no longer in use on the remote repository.
+
+---
+
+## Make changes
+
+`git log`
+Lists version history for the current branch.
+
+`git log —-pretty=oneline`
+Lists version history with each commit formatted to one line.
+
+`git add [file]`
+Shapshots the file in preparation for versioning.
+
+`git commit -m “[descriptive message]”`
+Records file snapshots permanently in version history.
+
+`git stash`
+Store all your changes away for later use.
+
+`git stash apply [stash]`
+Overwrites the current repository to specified stash.
+
+`git stash drop [stash]`
+Deletes the specified stash.
+
+---
+
+## Redo commits
+
+`git reset [commit]`
+Undoes all commits after specified commit, preserving changes locally.
+
+`git reset —hard [commit]`
+Discard all history and changes back to the specified commit.
+
+---
+
+## Rebasing
+
+`git rebase origin/master`
+Brings commits of branch up to date with master.
+
+`git rebase -i HEAD~<N>`
+Helps you to clean up/revise your commits in batch, by rewriting them.
+
+`git commit --amend`
+this helps you to rewrite the immediately most recent commit
+
 ## Information
 
 * `git status` Show the working tree status.
